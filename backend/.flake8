@@ -1,0 +1,18 @@
+[flake8]
+exclude =
+    .git,
+    __pycache__,
+    old,
+    build,
+    dist,
+    venv,
+    .venv,
+    */migrations/*,
+ignore = Q000
+inline-quotes = double
+import-order-style = google
+application-import-order = stdlib,third-party,first-party,application
+application-import-names = 
+    sea_battle,
+    game,
+    users,
