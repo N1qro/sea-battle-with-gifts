@@ -1,4 +1,6 @@
 import { createGlobalStyle } from "styled-components";
+import BackgroundPattern from "../assets/bg-pattern.svg"
+
 
 const GlobalStyles = createGlobalStyle`
     * {
@@ -12,10 +14,13 @@ const GlobalStyles = createGlobalStyle`
     }
 
     body {
+        color: white;
         font-family: "Inter", sans-serif;
-        line-height: normal;   
-
+        line-height: normal;
         min-height: 100vh;
+
+        background-image: url(${BackgroundPattern}), linear-gradient(180deg, #5D85EB 0%, #102E7B 100%);
+        background-size: 2rem;
     }
 
     a {
