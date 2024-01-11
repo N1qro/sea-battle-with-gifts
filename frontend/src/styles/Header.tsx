@@ -5,8 +5,9 @@ const StyledHeader = styled.header`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 40px;
+  flex-wrap: wrap;
 
+  padding: 18px 40px;
   border-radius: 0 0 1rem 1rem;
   background-color: rgba(var(--blue-color-1), 0.50);
 

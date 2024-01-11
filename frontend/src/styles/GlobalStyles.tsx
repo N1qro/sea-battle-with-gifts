@@ -33,7 +33,7 @@ const GlobalStyles = createGlobalStyle`
         display: flex;
         flex-direction: column;
 
-        width: 1066px;
+        max-width: 1066px;
         margin-inline: auto;
         gap: 1rem;
     }
