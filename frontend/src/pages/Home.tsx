@@ -1,4 +1,5 @@
 import { useState } from "react"
+import Button from "../components/Button"
 
 function Home() {
   const [ likeAmount, setLikeAmount ] = useState(0)
@@ -8,9 +9,10 @@ function Home() {
       <h2>Будем отталкиваться от этого =)</h2>
       <p>Я пока просто структуру проекта задал и роутер подключил =p</p>
       <p>Количество 👍 - {likeAmount}</p>
-      <button
+      <Button
+        $color="green"
         onClick={() => setLikeAmount(prev => prev + 1)}
-      >Поставить лайк</button>
+      >Поставить лайк</Button>
     </div>
   )
 }
