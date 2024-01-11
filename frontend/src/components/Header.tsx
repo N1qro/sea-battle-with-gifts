@@ -11,11 +11,11 @@ function Header() {
         <img src={SiteLogo} alt="site-brand" />
       </Link>
       <nav>
-        <Link to="">О проекте</Link>
+        <Link to="about">О проекте</Link>
       </nav>
       <nav>
-        <Button as={Link} to="" $color="blue">Авторизация</Button>
-        <Button as={Link} to="" $color="black">Регистрация</Button>
+        <Button as={Link} to="login" $color="blue">Авторизация</Button>
+        <Button as={Link} to="register" $color="black">Регистрация</Button>
       </nav>
     </StyledHeader>
   )
