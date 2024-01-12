@@ -30,6 +30,17 @@ class Game(models.Model):
         related_name="game",
     )
 
+    link = models.CharField(
+        verbose_name="ссылка",
+        max_length=10,
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = "Игра"
+        verbose_name_plural = "Игры"
+
 
 class Cell(models.Model):
     y = models.PositiveSmallIntegerField()
@@ -62,6 +73,10 @@ class Cell(models.Model):
         related_name="cell",
     )
 
+    class Meta:
+        verbose_name = "Клетка"
+        verbose_name_plural = "Клетки"
+
 
 class Prize(models.Model):
     title = models.CharField(
@@ -76,6 +91,8 @@ class Prize(models.Model):
     image = models.ImageField(
         upload_to="prize_images/",
         verbose_name="картинка приза",
+        blank=True,
+        null=True,
     )
 
     winner = models.ForeignKey(
@@ -86,6 +103,17 @@ class Prize(models.Model):
         blank=True,
         null=True,
     )
+
+    activation_code = models.CharField(
+        verbose_name="код активации",
+        max_length=10,
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = "Приз"
+        verbose_name_plural = "Призы"
 
 
 class Ship(models.Model):
@@ -114,3 +142,7 @@ class Ship(models.Model):
         verbose_name="игра",
         related_name="ship",
     )
+
+    class Meta:
+        verbose_name = "Корбаль"
+        verbose_name_plural = "Корабли"

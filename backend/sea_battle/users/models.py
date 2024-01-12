@@ -20,3 +20,6 @@ class UserShots(models.Model):
         blank=True,
         null=True,
     )
+
+    class Meta:
+        verbose_name_plural = "Выстрелы пользователей"
