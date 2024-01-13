@@ -16,4 +16,5 @@ urlpatterns = [
         name="token_refresh",
     ),
     path("user/", views.get_user),
+    path("signup/", views.SignupAPIView.as_view()),
 ]
