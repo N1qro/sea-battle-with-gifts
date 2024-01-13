@@ -9,7 +9,9 @@ from game import models
 @receiver(post_save, sender=models.Prize)
 def update_activation_code(sender, instance, **kwargs):
     if not instance.activation_code:
-        instance.activation_code = hashids.Hashids(min_length=10).encode(instance.pk)
+        instance.activation_code = hashids.Hashids(min_length=10).encode(
+            instance.pk,
+        )
         instance.save()
 
 

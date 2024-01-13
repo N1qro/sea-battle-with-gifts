@@ -1,9 +1,9 @@
 from hashids import Hashids
 
-def hashid_converter_factory(min_length=8, alphabet=Hashids.ALPHABET):
 
+def hashid_converter_factory(min_length=8, alphabet=Hashids.ALPHABET):
     class HashIdConverter:
-        regex = r'[{}]{{}}'.format(min_length, alphabet)
+        regex = r"[{}]{{}}".format(min_length, alphabet)  # noqa F523
 
         def to_python(self, value):
             return value

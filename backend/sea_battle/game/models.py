@@ -1,5 +1,6 @@
-from django.contrib.auth.models import User
 from django.db import models
+
+from users.models import User
 
 
 class Game(models.Model):
@@ -33,6 +34,12 @@ class Game(models.Model):
     link = models.CharField(
         verbose_name="ссылка",
         max_length=10,
+        null=True,
+        blank=True,
+    )
+
+    finish_at = models.DateTimeField(
+        verbose_name="игра завершена",
         null=True,
         blank=True,
     )
@@ -146,3 +153,24 @@ class Ship(models.Model):
     class Meta:
         verbose_name = "Корбаль"
         verbose_name_plural = "Корабли"
+
+
+class UserShots(models.Model):
+    game = models.ForeignKey(
+        Game,
+        on_delete=models.CASCADE,
+        verbose_name="игра",
+        related_name="user_shots",
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="пользователь",
+        related_name="user_shots",
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        verbose_name_plural = "Выстрелы пользователей"
