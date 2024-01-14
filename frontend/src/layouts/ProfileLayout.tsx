@@ -23,7 +23,7 @@ export async function loader() {
                 "shot_count": 5,
                 "prizes_awarded": 1,
             })
-        }, 1000) // аля задержка
+        }, 50) // аля задержка
     })
 }
 
