@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, ChangeEvent, FormEvent } from 'react'
 import StyledForm, { OneRow, FieldWrapper } from '../styles/StyledForm'
 import Button from '../components/Button'
 import { Header3 } from '../styles/TextStyles'
@@ -25,7 +25,7 @@ function Signup() {
     }
 
     return (
-        <StyledForm>
+        <StyledForm onSubmit={handleSubmit}>
             <Header3>Регистрация</Header3>
             <hr />
             <img width={128} height={128} src={FormLogo} alt="form-logo" />
