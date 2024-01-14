@@ -37,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
 class InvitesSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
-            "id": instance.pk,
+            "id": instance.game.pk,
             "title": instance.game.title,
             "text": instance.game.text,
             "link": instance.game.link,
@@ -53,10 +53,10 @@ class UserGamesSerializer(serializers.ModelSerializer):
         ).count()
 
         return {
-            "id": instance.pk,
+            "id": instance.game.pk,
             "title": instance.game.title,
-            "text": instance.game.text,
             "link": instance.game.link,
+            "finish_at": instance.game.finish_at,
             "shots": instance.count,
             "prizes_count": prizes_count,
         }
