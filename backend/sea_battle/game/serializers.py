@@ -7,16 +7,16 @@ from game import models
 class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Game
-        fields = ["id", "title", "size", "text"]
+        fields = ["id", "title", "size", "text", "link"]
 
 
 class PrizeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Game
-        fields = ["id", "title", "text", "image"]
+        model = models.Prize
+        fields = ["id", "title", "text", "activation_code"]
 
 
 class ShipSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Game
+        model = models.Ship
         fields = ["id", "cell", "prize", "game"]

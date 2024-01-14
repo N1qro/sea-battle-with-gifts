@@ -4,4 +4,5 @@ from game import models
 
 
 admin.site.register(models.Game, readonly_fields=["link"])
-admin.site.register(models.Prize, readonly_fields=["activation_code"])
+admin.site.register(models.Prize)
+admin.site.register(models.UserShots)

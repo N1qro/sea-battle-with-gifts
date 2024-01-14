@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import hashids
 
 from users.models import User
 
@@ -47,6 +50,13 @@ class Game(models.Model):
     class Meta:
         verbose_name = "Игра"
         verbose_name_plural = "Игры"
+
+
+@receiver(post_save, sender=Game)
+def update_link(sender, instance, **kwargs):
+    if not instance.link:
+        instance.link = hashids.Hashids(min_length=10).encode(instance.pk)
+        instance.save()
 
 
 class Cell(models.Model):
@@ -111,9 +121,16 @@ class Prize(models.Model):
         null=True,
     )
 
+    game = models.ForeignKey(
+        Game,
+        on_delete=models.CASCADE,
+        verbose_name="игра",
+        related_name="prize",
+    )
+
     activation_code = models.CharField(
         verbose_name="код активации",
-        max_length=10,
+        max_length=150,
         null=True,
         blank=True,
     )
@@ -170,6 +187,11 @@ class UserShots(models.Model):
         related_name="user_shots",
         blank=True,
         null=True,
+    )
+
+    count = models.IntegerField(
+        verbose_name="количество выстрелов",
+        default=2,
     )
 
     class Meta:
