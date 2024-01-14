@@ -7,13 +7,15 @@ import {
 
 import RootLayout from './layouts/RootLayout'
 import Home from './pages/Home'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route element={<RootLayout/>}>
     <Route index element={<Home/>} />
 
-    <Route path="register" />
-    <Route path="login" />
+    <Route path="register" element={<Signup/>} />
+    <Route path="login" element={<Login/>} />
     <Route path="about" />
 
     <Route path="profile">
