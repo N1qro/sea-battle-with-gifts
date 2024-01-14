@@ -26,6 +26,15 @@ export const h3_style = css`
     line-height: normal;
 `
 
+export const h4_style = css`
+    font-family: Inter;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+`
+
 export const Header3 = styled.h3`${h3_style}`
+export const Header4 = styled.h4`${h4_style}`
 export const SubText = styled.p`${subtext_style}`
 export const NavText = styled.p`${navtext_style}`
