@@ -16,9 +16,16 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import ProfileIndex from './pages/profile/Index'
 
-// loaders
+// Loaders
 import { loader as ProfileLoader } from './layouts/ProfileLayout'
 import { loader as PrizesLoader } from './pages/profile/Index'
+
+// Context
+import { AuthContext } from './context/AuthContext'
+import useAuth from './hooks/useAuth'
+import { useState } from 'react'
+import { User } from './types/general'
+
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route element={<RootLayout/>}>
@@ -39,7 +46,13 @@ const router = createBrowserRouter(createRoutesFromElements(
 ))
 
 function App() {
-  return <RouterProvider router={router}/>
+  const [ user, setUser ] = useState<User | null>(null)
+
+  return (
+    <AuthContext.Provider value={{user, setUser}}>
+      <RouterProvider router={router}/>
+    </AuthContext.Provider>
+  )
 }
 
 export default App

@@ -31,6 +31,7 @@ const StyledForm = styled.form`
 `
 
 export const FormError = styled.p`
+    max-width: 284px;
     color: red;
 `
 

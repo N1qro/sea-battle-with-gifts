@@ -1,16 +1,19 @@
-import { useState, ChangeEvent, FormEvent } from 'react'
-import StyledForm, { OneRow, FieldWrapper } from '../styles/StyledForm'
+import { useState, ChangeEvent, FormEvent, useRef, ElementRef } from 'react'
+import StyledForm, { OneRow, FieldWrapper, FormError } from '../styles/StyledForm'
 import Button from '../components/Button'
 import { Header3 } from '../styles/TextStyles'
 import FormLogo from "../assets/img/form-control.png"
 import Input from '../styles/InputElement'
 import { SubText } from '../styles/TextStyles'
-
+import { RegisterFields, RegisterErrors } from '../types/loginForm'
+import useAuth from '../hooks/useAuth'
 
 function Signup() {
-    const [ userData, setUserData ] = useState({
+    const [ error, setError ] = useState<RegisterErrors>({})
+    const { login } = useAuth()
+    const [ userData, setUserData ] = useState<RegisterFields>({
         email: "",
-        login: "",
+        username: "",
         password: "",
         password2: "",
     }) 
@@ -20,8 +23,38 @@ function Signup() {
     }
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
-        console.log(userData)
         e.preventDefault()
+
+        async function makeRequest() {
+            const data = await fetch('http://127.0.0.1:8000/api/user/register/', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "email": userData.email,
+                    "password": userData.password,
+                    "username": userData.username,
+                }),
+            })
+
+            const json = await data.json()
+            console.log(data.status)
+            console.log(data.statusText)
+            console.log(json)
+
+            if (data.ok) {
+                login({
+                    "accessToken": json.access,
+                    "refreshToken": json.refresh,
+                })
+            } else {
+                setError(json)
+            }
+        }
+
+        makeRequest()
     }
 
     return (
@@ -34,22 +67,24 @@ function Signup() {
                     <label htmlFor="">Почта</label>
                     <br />
                     <Input
-                        id="login"
+                        id="email"
                         placeholder='mail@yandex.ru'
                         type="text"
                         onChange={handleInput}
                     />
                 </div>
+                {error.email && <FormError>{error.email}</FormError>}
                 <div>
                     <label htmlFor="">Логин</label>
                     <br />
                     <Input
-                        id="login"
+                        id="username"
                         placeholder='bestlogin123'
                         type="text"
                         onChange={handleInput}
                     />
                 </div>
+                {error.username && <FormError>{error.username}</FormError>}
                 <div>
                     <OneRow>
                         <p>
@@ -71,6 +106,8 @@ function Signup() {
                             />
                         </p>
                     </OneRow>
+                    {error.password && <FormError>{error.password}</FormError>}
+                    {error.password2 && <FormError>{error.password2}</FormError>}
                 </div>
                 <Button $color="black" type="submit">Создать аккаунт</Button>
                 <SubText>Регистрируясь, вы принимаете условия пользования*</SubText>
