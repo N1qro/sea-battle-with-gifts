@@ -7,10 +7,11 @@ function Home() {
 
   function handleClick() {
     async function makeRequest() {
-      const data = await api.get("user/prizes/")
-
-      console.log(data)
-      console.log(data.statusText)
+      try {
+        const data = await api.get("user/prizes/", { withCredentials: true })
+      } catch (err) {
+        console.log(err)
+      }
     }
     makeRequest()
   }

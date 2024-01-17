@@ -7,6 +7,8 @@ import Input from '../styles/InputElement'
 import { SubText } from '../styles/TextStyles'
 import { RegisterFields, RegisterErrors } from '../types/loginForm'
 import useAuth from '../hooks/useAuth'
+import register from '../api/register'
+
 
 function Signup() {
     const [ error, setError ] = useState<RegisterErrors>({})
@@ -26,30 +28,13 @@ function Signup() {
         e.preventDefault()
 
         async function makeRequest() {
-            const data = await fetch('http://127.0.0.1:8000/api/user/register/', {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    "email": userData.email,
-                    "password": userData.password,
-                    "username": userData.username,
-                }),
-            })
+            console.log(userData)
 
-            const json = await data.json()
-            console.log(data.status)
-            console.log(data.statusText)
-            console.log(json)
+            const data = await register(userData)
 
-            if (data.ok) {
-                login({
-                    "accessToken": json.access,
-                    "refreshToken": json.refresh,
-                })
-            } else {
+            if (!data.ok) {
+                const json = await data.json()
+                console.log(json)
                 setError(json)
             }
         }

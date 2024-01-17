@@ -5,6 +5,10 @@ import {
   Route
 } from 'react-router-dom'
 
+import { useState } from 'react'
+import { User } from './types/general'
+import { AxiosSettings } from './api/api'
+
 // Layouts
 import RootLayout from './layouts/RootLayout'
 import RequireAuth from './layouts/requireAuth'
@@ -22,9 +26,6 @@ import { loader as PrizesLoader } from './pages/profile/Index'
 
 // Context
 import { AuthContext } from './context/AuthContext'
-import useAuth from './hooks/useAuth'
-import { useState } from 'react'
-import { User } from './types/general'
 
 
 const router = createBrowserRouter(createRoutesFromElements(
@@ -50,7 +51,9 @@ function App() {
 
   return (
     <AuthContext.Provider value={{user, setUser}}>
-      <RouterProvider router={router}/>
+      <AxiosSettings>
+        <RouterProvider router={router}/>
+      </AxiosSettings>
     </AuthContext.Provider>
   )
 }
