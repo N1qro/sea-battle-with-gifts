@@ -28,14 +28,16 @@ function Signup() {
         e.preventDefault()
 
         async function makeRequest() {
-            console.log(userData)
-
             const data = await register(userData)
 
-            if (!data.ok) {
-                const json = await data.json()
-                console.log(json)
-                setError(json)
+            if (data.status === "error") {
+                setError(data.content)
+            } else {
+                login({
+                    username: userData.username,
+                    accessToken: data.content.access,
+                    refreshToken: data.content.refresh,
+                })
             }
         }
 

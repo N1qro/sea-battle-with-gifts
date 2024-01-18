@@ -29,33 +29,33 @@ import { AuthContext } from './context/AuthContext'
 
 
 const router = createBrowserRouter(createRoutesFromElements(
-  <Route element={<RootLayout/>}>
-    <Route index element={<Home/>} />
+	<Route element={<RootLayout/>}>
+		<Route index element={<Home/>} />
 
-    <Route path="register" element={<Signup/>} />
-    <Route path="login" element={<Login/>} />
-    <Route path="about" />
+		<Route path="register" element={<Signup/>} />
+		<Route path="login" element={<Login/>} />
+		<Route path="about" />
 
-    <Route element={<RequireAuth />}>
-      <Route path="profile" element={<ProfileLayout />} loader={ProfileLoader}>
-        <Route index element={<ProfileIndex/>} loader={PrizesLoader} />
-        <Route path="history" />
-        <Route path="invitations" />
-      </Route>
-    </Route>
-  </Route>
+		<Route element={<RequireAuth />}>
+		<Route path="profile" element={<ProfileLayout />} loader={ProfileLoader}>
+			<Route index element={<ProfileIndex/>} loader={PrizesLoader} />
+			<Route path="history" />
+			<Route path="invitations" />
+		</Route>
+		</Route>
+	</Route>
 ))
 
 function App() {
-  const [ user, setUser ] = useState<User | null>(null)
+	const [ user, setUser ] = useState<User | null>(null)
 
-  return (
-    <AuthContext.Provider value={{user, setUser}}>
-      <AxiosSettings>
-        <RouterProvider router={router}/>
-      </AxiosSettings>
-    </AuthContext.Provider>
-  )
+	return (
+		<AuthContext.Provider value={{user, setUser}}>
+			<AxiosSettings>
+				<RouterProvider router={router}/>
+			</AxiosSettings>
+		</AuthContext.Provider>
+	)
 }
 
 export default App

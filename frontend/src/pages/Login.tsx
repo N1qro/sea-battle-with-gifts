@@ -8,14 +8,16 @@ import Input from '../styles/InputElement'
 import FormLogo from "../assets/img/form-control.png"
 import Button from '../components/Button'
 import useAuth from '../hooks/useAuth'
+import RequestLogin from '../api/login'
+
 
 function Login() {
+	const { login } = useAuth()
 	const [ error, setError ] = useState<LoginErrors>({})
 	const [ userData, setUserData ] = useState<LoginFields>({
 		username: "",
 		password: "",
 	})
-	const { login } = useAuth()
 
 	function handleInput(e: ChangeEvent<HTMLInputElement>) {
 		setUserData(prev => ({...prev, [e.target.id]: e.target.value}))
@@ -23,27 +25,16 @@ function Login() {
 
 	function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		async function makeRequest() {
-			const data = await fetch('http://127.0.0.1:8000/api/user/auth/', {
-				method: 'POST',
-				credentials: 'include',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					"username": userData.username,
-					"password": userData.password,
-				}),
-			})
+			const data = await RequestLogin(userData)
 
-			const json = await data.json()
-
-			if (data.ok) {
+			if (data.status === "success") {
 				login({
-					"accessToken": json.access,
-					"refreshToken": json.refresh,
+					accessToken: data.content.access,
+					refreshToken: data.content.refresh,
+					username: userData.username,
 				})
 			} else {
-				setError(json)
+				setError(data.content)
 			}
 		}
 

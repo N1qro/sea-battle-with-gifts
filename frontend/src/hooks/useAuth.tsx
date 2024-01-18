@@ -17,7 +17,6 @@ function useAuth() {
     }
 
     const logout = removeUser
-
     return { user, login, logout }
 }
 
