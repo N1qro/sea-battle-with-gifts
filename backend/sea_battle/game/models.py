@@ -27,6 +27,7 @@ class Game(models.Model):
             (3, "Окончена"),
         ),
         verbose_name="статус",
+        default=1,
     )
 
     users = models.ManyToManyField(
@@ -51,6 +52,9 @@ class Game(models.Model):
         verbose_name = "Игра"
         verbose_name_plural = "Игры"
 
+    def __str__(self):
+        return self.title
+
 
 @receiver(post_save, sender=Game)
 def update_link(sender, instance, **kwargs):
@@ -72,6 +76,7 @@ class Cell(models.Model):
             (4, "Стоит уничтоженный корабль"),
         ),
         verbose_name="статус",
+        default=1,
     )
 
     shot_by = models.ForeignKey(
@@ -94,6 +99,9 @@ class Cell(models.Model):
         verbose_name = "Клетка"
         verbose_name_plural = "Клетки"
 
+    def __str__(self):
+        return self.game.title
+
 
 class Prize(models.Model):
     title = models.CharField(
@@ -103,13 +111,6 @@ class Prize(models.Model):
 
     text = models.TextField(
         verbose_name="описание",
-    )
-
-    image = models.ImageField(
-        upload_to="prize_images/",
-        verbose_name="картинка приза",
-        blank=True,
-        null=True,
     )
 
     winner = models.ForeignKey(
@@ -138,6 +139,9 @@ class Prize(models.Model):
     class Meta:
         verbose_name = "Приз"
         verbose_name_plural = "Призы"
+
+    def __str__(self):
+        return self.title
 
 
 class Ship(models.Model):
@@ -171,6 +175,9 @@ class Ship(models.Model):
         verbose_name = "Корбаль"
         verbose_name_plural = "Корабли"
 
+    def __str__(self):
+        return self.game.title
+
 
 class UserShots(models.Model):
     game = models.ForeignKey(
@@ -196,3 +203,6 @@ class UserShots(models.Model):
 
     class Meta:
         verbose_name_plural = "Выстрелы пользователей"
+
+    def __str__(self):
+        return self.game.title
