@@ -1,8 +1,7 @@
 import axios from 'axios';
+import SessionStorageUserService from "../utils/SessionStorageUserService.ts";
 // import useAuth from '../hooks/useAuth';
 // import {FC, useEffect} from 'react';
-import getSessionStorageUser from "../utils/getSessionStorageUser.ts";
-import setSessionStorageUser from "../utils/setSessionStorageUser.ts";
 
 const api = axios.create({
     baseURL: 'http://127.0.0.1:8000/api/',
@@ -17,7 +16,7 @@ const api = axios.create({
 // Теперь можно вообще убрать токены из контекста
 api.interceptors.request.use(
     (config) => {
-        const user = getSessionStorageUser()
+        const user = SessionStorageUserService.get()
         if (user) {
             config.headers["Authorization"] = `Bearer ${user.accessToken}`
         }
@@ -38,14 +37,14 @@ api.interceptors.response.use(
         if (err.response.status === 401) {
             config._retry = true
             try {
-                const user = getSessionStorageUser()
+                const user = SessionStorageUserService.get()
                 if (user) {
                     const response = await api.post('/user/auth/refresh/', {
                         refresh: user.refreshToken
                     })
                     user.accessToken = response.data.access
                     user.refreshToken = response.data.refresh
-                    setSessionStorageUser(user)
+                    SessionStorageUserService.set(user)
                     return api(config)
                 }
                 return Promise.reject('unauthorized')

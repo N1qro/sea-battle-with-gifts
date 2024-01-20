@@ -1,7 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom"
+import useUser from "../hooks/useUser.tsx";
 
 function RequireAuth() {
-    const isLoggedIn = true
+    const {user} = useUser()
+    const isLoggedIn = !!user
 
     if (isLoggedIn) {
         return <Outlet />

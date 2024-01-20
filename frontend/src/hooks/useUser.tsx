@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import { User } from '../types/general'
-import setSessionStorageUser from "../utils/setSessionStorageUser.ts";
+import SessionStorageUserService from "../utils/SessionStorageUserService.ts";
 
 
 function useUser() {
@@ -9,12 +9,12 @@ function useUser() {
 
     function addUser(user: User) {
         setUser(user)
-        setSessionStorageUser(user)
+        SessionStorageUserService.set(user)
     }
 
     function removeUser() {
         setUser(null)
-        sessionStorage.removeItem("user")
+        SessionStorageUserService.remove()
     }
 
     return { user, addUser, removeUser }

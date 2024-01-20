@@ -1,13 +1,13 @@
 import { useEffect } from "react"
 import useUser from "./useUser"
 import { User } from "../types/general"
-import getSessionStorageUser from "../utils/getSessionStorageUser.ts";
+import SessionStorageUserService from "../utils/SessionStorageUserService.ts";
 
 function useAuth() {
     const { user, addUser, removeUser } = useUser()
 
     useEffect(() => {
-        const user = getSessionStorageUser()
+        const user = SessionStorageUserService.get()
         if (user) {
             addUser(user)
         }
