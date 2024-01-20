@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
-import StyledForm, { FormError } from '../styles/StyledForm'
+import StyledForm, { FormError, FieldWrapper } from '../styles/StyledForm'
 import { Header3 } from '../styles/TextStyles'
 
 import { LoginFields, LoginErrors } from '../types/loginForm'
@@ -20,8 +20,8 @@ function Login() {
 	})
 
 	function handleInput(e: ChangeEvent<HTMLInputElement>) {
-		setUserData(prev => ({...prev, [e.target.id]: e.target.value}))
-	}
+        setUserData(prev => ({...prev, [e.target.id]: e.target.value}))
+    }
 
 	function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		async function makeRequest() {
@@ -48,9 +48,9 @@ function Login() {
 			<hr />
 			<img width={128} height={128} src={FormLogo} alt="form-logo" />
 			
-			<div>
+			<FieldWrapper>
 				<div>
-					<label htmlFor="email">Логин</label>
+					<label htmlFor="username">Логин</label>
 					<br />
 					<Input
 						id="username"
@@ -73,7 +73,7 @@ function Login() {
 				</div>
 				{error.detail && <FormError>{error.detail}</FormError>}
 				<Button $color="black" type="submit">Войти</Button>
-			</div>
+			</FieldWrapper>
 
 			<nav>
 				<p>Не помните пароль? Восстановить</p>

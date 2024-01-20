@@ -11,6 +11,7 @@ const GlobalStyles = createGlobalStyle`
 
     :root {
         --blue-color-1: 46, 82, 167;
+        --blue-color-2: 189, 202, 234;
     }
 
     body {

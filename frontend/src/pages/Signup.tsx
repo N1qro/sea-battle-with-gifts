@@ -51,7 +51,7 @@ function Signup() {
             <img width={128} height={128} src={FormLogo} alt="form-logo" />
             <FieldWrapper>
                 <div>
-                    <label htmlFor="">Почта</label>
+                    <label htmlFor="email">Почта</label>
                     <br />
                     <Input
                         id="email"
@@ -62,7 +62,7 @@ function Signup() {
                 </div>
                 {error.email && <FormError>{error.email}</FormError>}
                 <div>
-                    <label htmlFor="">Логин</label>
+                    <label htmlFor="username">Логин</label>
                     <br />
                     <Input
                         id="username"
@@ -75,7 +75,7 @@ function Signup() {
                 <div>
                     <OneRow>
                         <p>
-                            <label htmlFor="">Пароль</label>
+                            <label htmlFor="password">Пароль</label>
                             <Input
                                 id="password"
                                 placeholder='********'
@@ -84,7 +84,7 @@ function Signup() {
                             />
                         </p>
                         <p>
-                            <label htmlFor="">Повтор пароля</label>
+                            <label htmlFor="password2">Повтор пароля</label>
                             <Input
                                 id="password2"
                                 placeholder='********'
