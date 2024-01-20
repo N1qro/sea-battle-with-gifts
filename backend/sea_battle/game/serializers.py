@@ -2,12 +2,26 @@ from rest_framework import serializers
 
 
 from game import models
+from users.models import User
 
 
 class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Game
         fields = ["id", "title", "size", "text", "link"]
+
+
+class UserShots(serializers.ModelSerializer):
+    game = serializers.PrimaryKeyRelatedField(
+        queryset=models.Game.objects.all(),
+    )
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+    )
+
+    class Meta:
+        model = models.UserShots
+        fields = ["id", "count", "game", "user"]
 
 
 class PrizeSerializer(serializers.ModelSerializer):

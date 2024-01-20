@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,8 +11,11 @@ import users.models
 import users.serializers
 
 
-class CreateGameAPIView(APIView):
+class CreateGameAPIView(CreateAPIView):
+    """Create game"""
+
     permission_classes = [IsAuthenticated, IsAdminUser]
+    serializer_class = game.serializers.GameSerializer
 
     def post(self, request):
         serializer = game.serializers.GameSerializer(data=request.data)
@@ -20,7 +24,9 @@ class CreateGameAPIView(APIView):
         return Response(status=HTTPStatus.CREATED)
 
 
-class CreatePrizeAPIView(APIView):
+class CreatePrizeAPIView(CreateAPIView):
+    """Create prize"""
+
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def post(self, request):
@@ -38,6 +44,8 @@ class CreatePrizeAPIView(APIView):
 
 
 class ShootAPIView(APIView):
+    """Make shoot"""
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -77,8 +85,15 @@ class ShootAPIView(APIView):
         return Response(data=data, status=HTTPStatus.OK)
 
 
-class AddPlayerAPIView(APIView):
+class PlayersAPIView(CreateAPIView, UpdateAPIView):
+    """
+    Add user - POST
+
+    Add shots - PUT
+    """
+
     permission_classes = [IsAuthenticated, IsAdminUser]
+    serializer_class = game.serializers.UserShots
 
     def post(self, request):
         user = users.models.User.objects.get(id=request.data.get("user"))
@@ -93,6 +108,18 @@ class AddPlayerAPIView(APIView):
             game=current_game,
             user=user,
             count=request.data.get("count"),
+        )
+
+        return Response(status=HTTPStatus.OK)
+
+    def put(self, request):
+        user = users.models.User.objects.get(id=request.data.get("user"))
+        current_game = game.models.Game.objects.get(
+            id=request.data.get("game"),
+        )
+
+        game.models.UserShots.objects.get(user=user, game=current_game).update(
+            count=request.data["count"],
         )
 
         return Response(status=HTTPStatus.OK)
