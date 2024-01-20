@@ -4,32 +4,17 @@ import { Header4, SubText, NavText } from "../styles/TextStyles"
 import { NavLink } from "react-router-dom"
 import UserAvatar from "../assets/img/Avatar.png"
 import Button from "../components/Button"
-
-
-interface UserData {
-    "username": string,
-    "email": string,
-    "shot_count": number,
-    "prizes_awarded": number,
-} 
-
+import getUserData from "../api/getUserData.ts";
+import {UserProfile} from "../types/general.ts";
 
 export async function loader() {
-    return new Promise<UserData>((resolve) => {
-        setTimeout(() => {
-            resolve({
-                "username": "Vladdick",
-                "email": "example@mail.ru",
-                "shot_count": 5,
-                "prizes_awarded": 1,
-            })
-        }, 50) // аля задержка
-    })
+    const data = await getUserData()
+    return data.content
 }
 
 
 function ProfileLayout() {
-    const data = useLoaderData() as UserData
+    const data = useLoaderData() as UserProfile
 
     return (
         <ProfileBackground>
@@ -41,7 +26,8 @@ function ProfileLayout() {
                 </div>
                 <div>
                     <NavText>Сделано выстрелов: {data.shot_count}</NavText>
-                    <NavText>Получено призов: {data.prizes_awarded}</NavText>
+                    {/*<NavText>Получено призов: {data.prizes_awarded}</NavText>*/}
+                    <NavText>Количество игр: {data.game_count}</NavText>
                     <NavText>Шанс попадания: ?%</NavText>
                 </div>
                 <nav>

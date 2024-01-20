@@ -15,6 +15,7 @@ function Header() {
 			</Link>
 			<nav>
 				<Link to="about">О проекте</Link>
+				<Link to="profile">PROFILE</Link>
 			</nav>
 			{!user ?
 				<nav>

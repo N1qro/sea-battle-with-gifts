@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import { User } from '../types/general'
+import setSessionStorageUser from "../utils/setSessionStorageUser.ts";
 
 
 function useUser() {
@@ -8,7 +9,7 @@ function useUser() {
 
     function addUser(user: User) {
         setUser(user)
-        sessionStorage.setItem("user", JSON.stringify(user))
+        setSessionStorageUser(user)
     }
 
     function removeUser() {

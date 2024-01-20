@@ -1,13 +1,13 @@
-import { useState, ChangeEvent, FormEvent, useRef, ElementRef } from 'react'
-import StyledForm, { OneRow, FieldWrapper, FormError } from '../styles/StyledForm'
+import {ChangeEvent, FormEvent, useState} from 'react'
+import StyledForm, {FieldWrapper, FormError, OneRow} from '../styles/StyledForm'
 import Button from '../components/Button'
-import { Header3 } from '../styles/TextStyles'
+import {Header3, SubText} from '../styles/TextStyles'
 import FormLogo from "../assets/img/form-control.png"
 import Input from '../styles/InputElement'
-import { SubText } from '../styles/TextStyles'
-import { RegisterFields, RegisterErrors } from '../types/loginForm'
+import {RegisterErrors, RegisterFields} from '../types/loginForm'
 import useAuth from '../hooks/useAuth'
 import register from '../api/register'
+import {serverResponses} from "../types/general.ts";
 
 
 function Signup() {
@@ -30,14 +30,10 @@ function Signup() {
         async function makeRequest() {
             const data = await register(userData)
 
-            if (data.status === "error") {
+            if (data.status !== serverResponses.success) {
                 setError(data.content)
             } else {
-                login({
-                    username: userData.username,
-                    accessToken: data.content.access,
-                    refreshToken: data.content.refresh,
-                })
+                login({username: userData.username})
             }
         }
 

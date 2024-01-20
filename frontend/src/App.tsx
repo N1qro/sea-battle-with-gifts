@@ -7,7 +7,7 @@ import {
 
 import { useState } from 'react'
 import { User } from './types/general'
-import { AxiosSettings } from './api/api'
+// import { AxiosSettings } from './api/api'
 
 // Layouts
 import RootLayout from './layouts/RootLayout'
@@ -59,9 +59,9 @@ function App() {
 
 	return (
 		<AuthContext.Provider value={{user, setUser}}>
-			<AxiosSettings>
+			{/*<AxiosSettings>*/}
 				<RouterProvider router={router}/>
-			</AxiosSettings>
+			{/*</AxiosSettings>*/}
 		</AuthContext.Provider>
 	)
 }

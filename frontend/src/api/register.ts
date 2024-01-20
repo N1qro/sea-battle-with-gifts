@@ -1,32 +1,27 @@
-import { AxiosError } from "axios";
-import { RegisterFields } from "../types/loginForm"
-import api from "./api";
+import {RegisterErrors, RegisterFields} from "../types/loginForm"
 import login from "./login";
+import {baseRequest} from "./baseRequest.ts";
+import {serverResponses} from "../types/general.ts";
 
 
 export default async function register(
-    { email, username, password } : Omit<RegisterFields, "password2">
-) {
-    try {
-        const response = await api.post("/user/register/", {
-            email,
-            password,
-            username,
-        })
-
-        if (response.status !== 201) {
-            throw Error(response.data)
+    {email, username, password}: Omit<RegisterFields, "password2">
+): Promise<{ status: serverResponses, content: RegisterErrors }> {
+    const result = await baseRequest('user/register/', {
+        email,
+        password,
+        username,
+    })
+    if (result.status === serverResponses.success) {
+        await login({username, password})
+        return {
+            status: result.status,
+            content: {}
         }
-
-        return await login({username, password})
-    } catch (err) {
-        if (err instanceof AxiosError && err.response) {
-            return {
-                "status": "error",
-                "content": err.response.data,
-            }
+    } else {
+        return {
+            status: result.status,
+            content: result.response as RegisterErrors
         }
     }
-
-    return response.data
 }
