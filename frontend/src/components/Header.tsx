@@ -15,6 +15,7 @@ function Header() {
 			</Link>
 			<nav>
 				<Link to="about">О проекте</Link>
+				{/*Сделал чисто для проверки работы профиля, чтобы не по url заходить*/}
 				<Link to="profile">PROFILE</Link>
 			</nav>
 			{!user ?

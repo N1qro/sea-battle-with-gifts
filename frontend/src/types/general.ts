@@ -6,13 +6,6 @@ export interface User {
     refreshToken?: string;
 }
 
-export interface UserProfile {
-    username: string
-    email: string
-    game_count: number
-    shot_count: number
-}
-
 export enum serverResponses {
     success,
     error,

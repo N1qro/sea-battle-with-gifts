@@ -34,7 +34,7 @@ api.interceptors.response.use(
     },
     async (err) => {
         const config = err.config
-        if (err.response.status === 401) {
+        if (config.url !== "user/auth/" && err.response.status === 401) {
             config._retry = true
             try {
                 const user = SessionStorageUserService.get()

@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom"
 import UserAvatar from "../assets/img/Avatar.png"
 import Button from "../components/Button"
 import getUserData from "../api/getUserData.ts";
-import {UserProfile} from "../types/general.ts";
+import {UserProfile} from "../types/userData.ts";
 
 export async function loader() {
     const data = await getUserData()
