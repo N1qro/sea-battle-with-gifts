@@ -11,8 +11,8 @@ const api = axios.create({
     },
 })
 
-// т.к. токены доступны только через хуки пришлось доставать их из sessionStorage, либо чтобы нормально
-// выглядело надо переходить на redux или zustand, они разрешают использовать контекст везде.
+// т.к. токены доступны только через хуки пришлось доставать их из sessionStorage, если использовать контекст, то тогда
+// надо переходить на redux или zustand, они разрешают использовать контекст везде.
 // Также с хуками проблема: они при перезагрузке страницы не успевают установить headers (запрос на сервер делается раньше).
 // Теперь можно вообще убрать токены из контекста
 api.interceptors.request.use(
@@ -24,6 +24,7 @@ api.interceptors.request.use(
         return config
     },
     (error) => {
+        console.log(1)
         return Promise.reject(error)
     }
 )
@@ -39,10 +40,11 @@ api.interceptors.response.use(
             try {
                 const user = getSessionStorageUser()
                 if (user) {
-                    const response = await api.post('/user/auth/refresh', {
-                        refreshToken: user.refreshToken
+                    const response = await api.post('/user/auth/refresh/', {
+                        refresh: user.refreshToken
                     })
-                    user.accessToken = response.data.accessToken
+                    user.accessToken = response.data.access
+                    user.refreshToken = response.data.refresh
                     setSessionStorageUser(user)
                     return api(config)
                 }

@@ -10,7 +10,6 @@ export const baseRequest = async (url: string, data?: object): Promise<{ status:
             response: response.data
         }
     } catch (e) {
-        console.log(1)
         if (e instanceof AxiosError && e.response && e.response.status === 401) {
             return {status: serverResponses.error, response: 'unauthorized'}
         } else {
