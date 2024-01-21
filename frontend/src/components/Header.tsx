@@ -7,6 +7,7 @@ import useAuth from "../hooks/useAuth"
 
 function Header() {
 	const { user, logout } = useAuth()
+	const isLoggedIn = !!user
 
 	return (
 		<StyledHeader>
@@ -15,6 +16,7 @@ function Header() {
 			</Link>
 			<nav>
 				<Link to="about">О проекте</Link>
+				{isLoggedIn && <Link to="profile">Профиль</Link>}
 			</nav>
 			{!user ?
 				<nav>

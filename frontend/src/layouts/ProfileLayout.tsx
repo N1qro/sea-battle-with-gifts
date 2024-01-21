@@ -4,6 +4,8 @@ import { Header4, SubText, NavText } from "../styles/TextStyles"
 import { NavLink } from "react-router-dom"
 import UserAvatar from "../assets/img/Avatar.png"
 import Button from "../components/Button"
+import useAuth from "../hooks/useAuth"
+import { User } from "../types/general"
 
 
 interface UserData {
@@ -29,6 +31,7 @@ export async function loader() {
 
 
 function ProfileLayout() {
+    const { user } = useAuth()
     const data = useLoaderData() as UserData
 
     return (
@@ -36,8 +39,8 @@ function ProfileLayout() {
             <div>
                 <div>
                     <img src={UserAvatar} alt="profile-picture" />
-                    <Header4>{data.username}</Header4>
-                    <SubText>({data.email})</SubText>
+                    <Header4>{user!.username}</Header4>
+                    <SubText>({user!.email})</SubText>
                 </div>
                 <div>
                     <NavText>Сделано выстрелов: {data.shot_count}</NavText>
