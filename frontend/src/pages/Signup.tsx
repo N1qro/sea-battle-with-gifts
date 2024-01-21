@@ -8,21 +8,17 @@ import { SubText } from '../styles/TextStyles'
 import { RegisterFields, RegisterErrors } from '../types/loginForm'
 import useAuth from '../hooks/useAuth'
 import register from '../api/register'
-import { useNavigate } from 'react-router-dom'
 
 
 function Signup() {
     const [ error, setError ] = useState<RegisterErrors>({})
-    const { user, login } = useAuth()
-    const navigate = useNavigate()
+    const { login } = useAuth()
     const [ userData, setUserData ] = useState<RegisterFields>({
         email: "",
         username: "",
         password: "",
         password2: "",
     })
-
-    if (!!user) { navigate(-1) }
 
     function handleInput(e: ChangeEvent<HTMLInputElement>) {
         setUserData(prev => ({...prev, [e.target.id]: e.target.value}))
