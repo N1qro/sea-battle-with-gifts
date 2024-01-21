@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom"
 import UserAvatar from "../assets/img/Avatar.png"
 import Button from "../components/Button"
 import useAuth from "../hooks/useAuth"
-import { User } from "../types/general"
+import { useEffect, useState } from "react"
 
 
 interface UserData {
@@ -16,23 +16,22 @@ interface UserData {
 } 
 
 
-export async function loader() {
-    return new Promise<UserData>((resolve) => {
-        setTimeout(() => {
-            resolve({
-                "username": "Vladdick",
-                "email": "example@mail.ru",
-                "shot_count": 5,
-                "prizes_awarded": 1,
-            })
-        }, 50) // аля задержка
-    })
-}
-
-
 function ProfileLayout() {
     const { user } = useAuth()
-    const data = useLoaderData() as UserData
+    const [ data, setData ] = useState()
+
+    useEffect(() => {
+        setData({
+            "username": "Vladdick",
+            "email": "example@mail.ru",
+            "shot_count": 5,
+            "prizes_awarded": 1,
+        })
+    }, [])
+
+    if (!data) {
+        return <p>Loading</p>
+    }
 
     return (
         <ProfileBackground>

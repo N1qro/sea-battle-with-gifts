@@ -22,10 +22,6 @@ import Signup from './pages/Signup'
 import ProfileIndex from './pages/profile/Index'
 import AdminPage from './pages/admin/Index'
 
-// Loaders
-import { loader as ProfileLoader } from './layouts/ProfileLayout'
-import { loader as PrizesLoader } from './pages/profile/Index'
-
 // Context
 import { AuthContext } from './context/AuthContext'
 import Game from './pages/admin/Game'
@@ -40,8 +36,8 @@ const router = createBrowserRouter(createRoutesFromElements(
 		<Route path="about" />
 
 		<Route element={<RequireAuth />}>
-			<Route path="profile" element={<ProfileLayout />} loader={ProfileLoader}>
-				<Route index element={<ProfileIndex/>} loader={PrizesLoader} />
+			<Route path="profile" element={<ProfileLayout />} >
+				<Route index element={<ProfileIndex/>} />
 				<Route path="history" />
 				<Route path="invitations" />
 			</Route>

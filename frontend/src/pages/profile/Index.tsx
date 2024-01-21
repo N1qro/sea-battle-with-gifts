@@ -1,4 +1,5 @@
-import { useLoaderData } from "react-router-dom"
+import { useEffect, useState } from "react"
+import api from "../../api/api"
 
 interface PrizeInfo {
     id: number,
@@ -7,42 +8,25 @@ interface PrizeInfo {
     content: string,
 } 
 
-export async function loader() {
-    return new Promise<PrizeInfo[]>((resolve) => {
-        setTimeout(() => {
-            resolve([
-                {
-                    "id": 1,
-                    "title": "1000 GP | PUBG",
-                    "description": "Игровая валюта для Steam игры PUBG",
-                    "content": "SUPER-SECRET-GCOIN-ACODE",
-                },
-                {
-                    "id": 2,
-                    "title": "12000 GP | PUBG",
-                    "description": "Игровая валюта для Steam игры PUBG",
-                    "content": "SUPER-SECRET-GCOIN-ACODE",
-                },
-                {
-                    "id": 3,
-                    "title": "13500 VB | Fortnite",
-                    "description": "Игровая валюта для игры Fortnite",
-                    "content": "SUPER-SECRET-VCOIN-ACODE",
-                },
-                {
-                    "id": 4,
-                    "title": "5175 VP | VALORANT",
-                    "description": "Игровая валюта для игры Valorant",
-                    "content": "SUPER-SECRET-VCOIN-ACODE",
-                }
-            ])
-        }, 50) // аля задержка
-    })
-}
-
 
 function Index() {
-    const data = useLoaderData() as PrizeInfo[]
+    const [data, setData] = useState<PrizeInfo[]>()
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const prizes = await api.get("user/prizes/")
+                console.log(prizes)
+                setData(prizes.data)
+            } catch (err) {
+                console.log(err)
+            }
+        })()
+    }, [])
+
+    if (!data) {
+        return <p>Loading</p>
+    }
 
     return (
         <div>
