@@ -1,13 +1,13 @@
 import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  RouterProvider,
-  Route
+    createBrowserRouter,
+    createRoutesFromElements,
+    RouterProvider,
+    Route
 } from 'react-router-dom'
 
-import { useState } from 'react'
-import { User } from './types/general'
-// import { AxiosSettings } from './api/api'
+import {useState} from 'react'
+import {User} from './types/general'
+import {AxiosSettings} from './api/api'
 
 // Layouts
 import RootLayout from './layouts/RootLayout'
@@ -23,47 +23,52 @@ import ProfileIndex from './pages/profile/Index'
 import AdminPage from './pages/admin/Index'
 
 // Loaders
-import { loader as ProfileLoader } from './layouts/ProfileLayout'
-import { loader as PrizesLoader } from './pages/profile/Index'
+import {loader as ProfileLoader} from './layouts/ProfileLayout'
+import {loader as PrizesLoader} from './pages/profile/Index'
 
 // Context
-import { AuthContext } from './context/AuthContext'
+import {AuthContext} from './context/AuthContext'
 import Game from './pages/admin/Game'
+
+// SessionStorage
+import SessionStorageUserService from "./utils/SessionStorageUserService.ts";
 
 
 const router = createBrowserRouter(createRoutesFromElements(
-	<Route element={<RootLayout/>}>
-		<Route index element={<Home/>} />
+    <Route element={<RootLayout/>}>
+        <Route index element={<Home/>}/>
 
-		<Route path="register" element={<Signup/>} />
-		<Route path="login" element={<Login/>} />
-		<Route path="about" />
+        <Route path="register" element={<Signup/>}/>
+        <Route path="login" element={<Login/>}/>
+        <Route path="about"/>
 
-		<Route element={<RequireAuth />}>
-			<Route path="profile" element={<ProfileLayout />} loader={ProfileLoader}>
-				<Route index element={<ProfileIndex/>} loader={PrizesLoader} />
-				<Route path="history" />
-				<Route path="invitations" />
-			</Route>
-		</Route>
+        <Route element={<RequireAuth/>}>
+            <Route path="profile" element={<ProfileLayout/>} loader={ProfileLoader}>
+                <Route index element={<ProfileIndex/>} loader={PrizesLoader}/>
+                <Route path="history"/>
+                <Route path="invitations"/>
+            </Route>
+        </Route>
 
-		<Route path="admin" element={<RequireAdmin />}>
-			<Route index element={<AdminPage />} />
-			<Route path="game/:hash" element={<Game />}/>
-		</Route>
-	</Route>
+        <Route path="admin" element={<RequireAdmin/>}>
+            <Route index element={<AdminPage/>}/>
+            <Route path="game/:hash" element={<Game/>}/>
+        </Route>
+    </Route>
 ))
 
 function App() {
-	const [ user, setUser ] = useState<User | null>(null)
+    const [user, setUser] = useState<User | null>(() => {
+        return SessionStorageUserService.get();
+    })
 
-	return (
-		<AuthContext.Provider value={{user, setUser}}>
-			{/*<AxiosSettings>*/}
-				<RouterProvider router={router}/>
-			{/*</AxiosSettings>*/}
-		</AuthContext.Provider>
-	)
+    return (
+        <AuthContext.Provider value={{user, setUser}}>
+            <AxiosSettings>
+                <RouterProvider router={router}/>
+            </AxiosSettings>
+        </AuthContext.Provider>
+    )
 }
 
 export default App

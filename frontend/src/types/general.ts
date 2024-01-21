@@ -2,8 +2,8 @@ export interface User {
     id?: number;
     username?: string;
     email?: string;
-    accessToken?: string;
-    refreshToken?: string;
+    accessToken: string;
+    refreshToken: string;
 }
 
 export enum serverResponses {
