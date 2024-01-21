@@ -1,7 +1,8 @@
 from http import HTTPStatus
 
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -11,23 +12,63 @@ import users.models
 import users.serializers
 
 
-class CreateGameAPIView(CreateAPIView):
-    """Create game"""
+class GameNotStartedMixin:
 
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    def put(self, request, pk):
+        if game.models.Game.objects.get(id=request.data["game"]).status == 1:
+            return self.update(request, pk)
+        
+        return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)
+
+    def delete(self, request, pk):
+        if game.models.Game.objects.get(id=request.data["game"]).status == 1:
+            return self.destroy(request, pk)
+        
+        return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)
+
+
+class GameAPIView(
+        GenericAPIView,
+        mixins.CreateModelMixin,
+        mixins.UpdateModelMixin,
+        mixins.DestroyModelMixin,
+        GameNotStartedMixin,
+    ):
+    
+    """
+    POST - create game
+
+    PUT - update game
+
+    DELETE - delete game
+    """
+
+    permission_classes = [IsAdminUser]
     serializer_class = game.serializers.GameSerializer
+    queryset = game.models.Game.objects.all()
+    
+    def put(self, request, pk):
+        request.data["game"] = pk
+        return super().put(request, pk)
+    
+    def delete(self, request, pk):
+        request.data["game"] = pk
+        return super().delete(request, pk)
+    
 
-    def post(self, request):
-        serializer = game.serializers.GameSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=HTTPStatus.CREATED)
+class PrizeAPIView(
+        GenericAPIView,
+        mixins.CreateModelMixin,
+        mixins.UpdateModelMixin,
+        mixins.DestroyModelMixin,
+        GameNotStartedMixin,
+    ):
 
-
-class CreatePrizeAPIView(CreateAPIView):
     """Create prize"""
 
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    # permission_classes = [IsAdminUser]
+    serializer_class = game.serializers.PrizeSerializer
+    queryset = game.models.Prize.objects.all()
 
     def post(self, request):
         prize = game.serializers.PrizeSerializer(data=request.data)
@@ -41,6 +82,13 @@ class CreatePrizeAPIView(CreateAPIView):
         ship.save()
 
         return Response(status=HTTPStatus.CREATED)
+    
+    def put(self, request, pk):
+        return super().put(request, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, pk)
+
 
 
 class ShootAPIView(APIView):
@@ -49,19 +97,28 @@ class ShootAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        current_game = game.models.Game.objects.get(id=request.data.get("game"))
+
         cell, created = game.models.Cell.objects.get_or_create(
             x=request.data.get("x"),
             y=request.data.get("y"),
-            game=game.models.Game.objects.get(id=request.data.get("game")),
+            game=current_game,
         )
 
         data = {"before_cell_status": cell.status}
 
-        if cell.status == 1:
+        user_shots = game.models.UserShots.objects.get(user=request.user, game=current_game)
+
+        if user_shots.count == 0:
+            data["error"] = "Нет выстрелов"
+
+        elif cell.status == 1:
             cell.status = 2
+            user_shots.count -= 1
 
         elif cell.status == 3:
             cell.status = 4
+            user_shots.count -= 1
 
             ship = game.models.Ship.objects.get(cell=cell)
             ship.is_alive = False
@@ -79,21 +136,33 @@ class ShootAPIView(APIView):
             ).data
 
         cell.save()
+        user_shots.save()
 
+        data["count"] = user_shots.count
         data["after_cell_status"] = cell.status
 
         return Response(data=data, status=HTTPStatus.OK)
 
 
-class PlayersAPIView(CreateAPIView, UpdateAPIView):
+class PlayersAPIView(
+        GenericAPIView,
+        mixins.CreateModelMixin,
+        mixins.UpdateModelMixin,
+        mixins.DestroyModelMixin,
+        GameNotStartedMixin,
+    ):
+
     """
     Add user - POST
 
     Add shots - PUT
+
+    Delete user from game - DELETE
     """
 
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAdminUser]
     serializer_class = game.serializers.UserShots
+    queryset = game.models.UserShots.objects.all()
 
     def post(self, request):
         user = users.models.User.objects.get(id=request.data.get("user"))
@@ -111,15 +180,14 @@ class PlayersAPIView(CreateAPIView, UpdateAPIView):
         )
 
         return Response(status=HTTPStatus.OK)
+    
+    def put(self, request, pk):
+        return self.update(request, pk)
 
-    def put(self, request):
-        user = users.models.User.objects.get(id=request.data.get("user"))
-        current_game = game.models.Game.objects.get(
-            id=request.data.get("game"),
-        )
-
-        game.models.UserShots.objects.get(user=user, game=current_game).update(
-            count=request.data["count"],
-        )
-
-        return Response(status=HTTPStatus.OK)
+    def delete(self, request, pk):
+        current_game = game.models.Game.objects.get(id=request.data["game"])
+        if current_game.status == 1:
+            current_game.users.remove(pk)
+            return self.destroy(request, pk)
+        
+        return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)

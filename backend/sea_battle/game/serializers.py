@@ -6,6 +6,8 @@ from users.models import User
 
 
 class GameSerializer(serializers.ModelSerializer):
+    link = serializers.ReadOnlyField()
+
     class Meta:
         model = models.Game
         fields = ["id", "title", "size", "text", "link"]
