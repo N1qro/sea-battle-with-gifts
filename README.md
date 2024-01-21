@@ -10,7 +10,73 @@ TODO
 
 ### Запуск серверной части (Django + DFR):
 
-TODO
+# Установка 
+## Клонирование репозитория
+```
+git clone https://github.com/N1qro/sea-battle-with-gifts.git
+```
+## Создание виртуального окружения
+### Для Linux
+```
+python3 -m venv venv
+source venv/bin/activate
+```
+### Для Windows
+```
+python -m venv venv
+venv\bin\activate
+```
+
+## Перейдите в директорию backend
+```
+cd backend
+```
+
+## Установка .env
+### Для Linux
+```
+mv template.env .env
+```
+И измените .env под себя
+### Для Windows
+```
+ren template.env .env
+```
+И измените .env под себя
+
+## Установка requirements
+### Выберите один из файлов
+Для работы сайта:
+```
+pip install -r requirements/prod.txt
+```
+Для разработки:
+```
+pip install -r requirements/dev.txt
+```
+Для тестирования и отладки:
+```
+pip install -r requirements/test.txt
+```
+
+## Перейдите в директорию sea_battle
+```
+cd sea_battle
+```
+
+## Подготовка проекта
+```
+python manage.py migrate
+```
+
+## Запуск проекта
+```
+python manage.py runserver
+```
+
+## База данных
+![DataBase](ER.png)
+
 
 ### Запуск клиентской части (ReactJS):
 
@@ -26,7 +92,7 @@ TODO
 ### Участники 👨‍💻
 * Матвей (@GormCHEV)
 * Новиков Андрей Юрьевич (https://github.com/n1qro)
-* Андрей (DRAKUTONT)
+* Данилов Андрей Юрьевич (https://github.com/DRAKUTONT)
 * Кляйн Михаил Андреевич (https://github.com/mk5606)
 
 > Техническая документация требуемого проекта: https://cloud.predprof.olimpiada.ru/index.php/s/cSbWxGQ3PsW5z7E  
