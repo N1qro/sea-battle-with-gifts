@@ -1,8 +1,8 @@
 from http import HTTPStatus
 
-from rest_framework.generics import CreateAPIView, UpdateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework import mixins
+from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,29 +13,33 @@ import users.serializers
 
 
 class GameNotStartedMixin:
-
     def put(self, request, pk):
         if game.models.Game.objects.get(id=request.data["game"]).status == 1:
             return self.update(request, pk)
-        
+
         return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)
 
     def delete(self, request, pk):
         if game.models.Game.objects.get(id=request.data["game"]).status == 1:
             return self.destroy(request, pk)
-        
+
         return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)
 
 
 class GameAPIView(
-        GenericAPIView,
-        mixins.CreateModelMixin,
-        mixins.UpdateModelMixin,
-        mixins.DestroyModelMixin,
-        GameNotStartedMixin,
-    ):
-    
+    GenericAPIView,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    GameNotStartedMixin,
+):
+
     """
+    GET - all games
+
+    GET with pk - game with prizes
+
     POST - create game
 
     PUT - update game
@@ -46,49 +50,87 @@ class GameAPIView(
     permission_classes = [IsAdminUser]
     serializer_class = game.serializers.GameSerializer
     queryset = game.models.Game.objects.all()
-    
+
+    def get(self, request, pk=None):
+        if pk:
+            current_game = game.models.Game.objects.get(id=pk)
+            ships = game.models.Ship.objects.filter(game=current_game)
+            ships_serializer = game.serializers.ShipWithPrizeSerializer(
+                instance=ships,
+                many=True,
+            )
+
+            game_serializer = game.serializers.GameSerializer(
+                instance=current_game,
+                context={"ships": ships_serializer.data},
+            )
+            return Response(game_serializer.data, status=HTTPStatus.OK)
+
+        games = game.models.Game.objects.all()
+        game_serializer = game.serializers.GameSerializer(
+            instance=games,
+            many=True,
+        )
+        return Response(game_serializer.data, status=HTTPStatus.OK)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
     def put(self, request, pk):
         request.data["game"] = pk
         return super().put(request, pk)
-    
+
     def delete(self, request, pk):
         request.data["game"] = pk
         return super().delete(request, pk)
-    
+
 
 class PrizeAPIView(
-        GenericAPIView,
-        mixins.CreateModelMixin,
-        mixins.UpdateModelMixin,
-        mixins.DestroyModelMixin,
-        GameNotStartedMixin,
-    ):
+    GenericAPIView,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    GameNotStartedMixin,
+):
 
     """Create prize"""
 
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
     serializer_class = game.serializers.PrizeSerializer
     queryset = game.models.Prize.objects.all()
+
+    def get(self, request, pk=None):
+        if pk:
+            prize = game.models.Prize.objects.get(id=pk)
+            prize_serializer = game.serializers.PrizeSerializer(instance=prize)
+
+            return Response(prize_serializer.data, status=HTTPStatus.OK)
+
+        prizes = game.models.Prize.objects.all()
+        prizes_serializer = game.serializers.PrizeSerializer(
+            instance=prizes,
+            many=True,
+        )
+        return Response(prizes_serializer.data, status=HTTPStatus.OK)
 
     def post(self, request):
         prize = game.serializers.PrizeSerializer(data=request.data)
         prize.is_valid(raise_exception=True)
         prize.save()
 
-        request.data["prize"] = prize.instance.id
+        request.data["prize"] = prize.data
         request.data["cell"]["game"] = request.data["game"]
         ship = game.serializers.ShipSerializer(data=request.data)
         ship.is_valid(raise_exception=True)
         ship.save()
 
         return Response(status=HTTPStatus.CREATED)
-    
+
     def put(self, request, pk):
         return super().put(request, pk)
 
     def delete(self, request, pk):
         return super().delete(request, pk)
-
 
 
 class ShootAPIView(APIView):
@@ -97,7 +139,9 @@ class ShootAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        current_game = game.models.Game.objects.get(id=request.data.get("game"))
+        current_game = game.models.Game.objects.get(
+            id=request.data.get("game"),
+        )
 
         cell, created = game.models.Cell.objects.get_or_create(
             x=request.data.get("x"),
@@ -107,7 +151,10 @@ class ShootAPIView(APIView):
 
         data = {"before_cell_status": cell.status}
 
-        user_shots = game.models.UserShots.objects.get(user=request.user, game=current_game)
+        user_shots = game.models.UserShots.objects.get(
+            user=request.user,
+            game=current_game,
+        )
 
         if user_shots.count == 0:
             data["error"] = "Нет выстрелов"
@@ -145,12 +192,12 @@ class ShootAPIView(APIView):
 
 
 class PlayersAPIView(
-        GenericAPIView,
-        mixins.CreateModelMixin,
-        mixins.UpdateModelMixin,
-        mixins.DestroyModelMixin,
-        GameNotStartedMixin,
-    ):
+    GenericAPIView,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    GameNotStartedMixin,
+):
 
     """
     Add user - POST
@@ -180,7 +227,7 @@ class PlayersAPIView(
         )
 
         return Response(status=HTTPStatus.OK)
-    
+
     def put(self, request, pk):
         return self.update(request, pk)
 
@@ -189,5 +236,5 @@ class PlayersAPIView(
         if current_game.status == 1:
             current_game.users.remove(pk)
             return self.destroy(request, pk)
-        
+
         return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)

@@ -10,7 +10,14 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Game
-        fields = ["id", "title", "size", "text", "link"]
+        fields = ["id", "title", "status", "size", "text", "link"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if self.context.get("ships"):
+            representation["ships"] = self.context["ships"]
+
+        return representation
 
 
 class UserShots(serializers.ModelSerializer):
@@ -66,3 +73,15 @@ class ShipSerializer(serializers.ModelSerializer):
         )
 
         return models.Ship.objects.create(cell=cell, **validated_data)
+
+
+class ShipWithPrizeSerializer(serializers.ModelSerializer):
+    game = serializers.PrimaryKeyRelatedField(
+        queryset=models.Game.objects.all(),
+    )
+    prize = PrizeSerializer()
+    cell = CellSerializer()
+
+    class Meta:
+        model = models.Ship
+        fields = ["id", "cell", "game", "is_alive", "prize"]
