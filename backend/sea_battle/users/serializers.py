@@ -29,7 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
         )["shot_count"]
 
         representation["prize_count"] = prizes
-        representation["shot_count"] = shots
+        representation["shot_count"] = shots if shots else 0
 
         return representation
 
