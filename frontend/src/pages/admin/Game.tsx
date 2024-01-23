@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { Outlet, useNavigate, useParams } from "react-router-dom"
 import { GameData } from "../../types/responses"
 import get_initial_data from "../../api/gamedata"
 
@@ -8,12 +8,25 @@ import {
     NavContainer,
     TitleBox,
     SidebarContainer,
-    Cell,
 } from "../../styles/GamePage"
 import Board from "../../components/Board"
+import { NavLink } from "react-router-dom"
+
+// Icons
+import info_filled from "../../assets/svg/info_filled.svg"
+import players_filled from "../../assets/svg/users_filled.svg"
+import prizes_filled from "../../assets/svg/gift_filled.svg"
+import log_filled from "../../assets/svg/document_filled.svg"
+
+import info_empty from "../../assets/svg/info_empty.svg"
+import players_empty from "../../assets/svg/users_empty.svg"
+import prizes_empty from "../../assets/svg/gift_empty.svg"
+import log_empty from "../../assets/svg/document_empty.svg"
+
 
 function Game() {
     const parameters = useParams()
+    const navigate = useNavigate()
     const [ gameData, setGameData ] = useState<GameData | null>(null)
     const [ selectedCell, setSelectedCell ] = useState<string | null>(null)
 
@@ -28,6 +41,10 @@ function Game() {
         })()
     }, [])
 
+    useEffect(() => {
+        navigate("ships")
+    }, [selectedCell])
+
     if (!gameData) {
         return <p>Loading</p>
     } 
@@ -40,8 +57,31 @@ function Game() {
                 currentCell={selectedCell}
                 setCurrentCell={setSelectedCell}
             />
-            <NavContainer></NavContainer>
-            <SidebarContainer>a</SidebarContainer>
+            <NavContainer>
+                <NavLink end to="">
+                    {({ isActive }) => (
+                        <img src={isActive ? info_filled : info_empty} alt="info-link" />
+                    )}
+                </NavLink>
+                <NavLink to="players">
+                    {({ isActive }) => (
+                        <img src={isActive ? players_filled : players_empty} alt="info-link" />
+                    )}
+                </NavLink>
+                <NavLink to="ships">
+                    {({ isActive }) => (
+                        <img src={isActive ? prizes_filled : prizes_empty} alt="info-link" />
+                    )}
+                </NavLink>
+                <NavLink to="log">
+                    {({ isActive }) => (
+                        <img src={isActive ? log_filled : log_empty} alt="info-link" />
+                    )}
+                </NavLink>
+            </NavContainer>
+            <SidebarContainer>
+                <Outlet context={{selectedCell, hash: parameters.hash}}/>
+            </SidebarContainer>
         </Container>
     )
 }

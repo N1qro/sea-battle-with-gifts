@@ -22,6 +22,11 @@ import Signup from './pages/Signup'
 import ProfileIndex from './pages/profile/Index'
 import AdminPage from './pages/admin/Index'
 
+import CellInfo from './pages/admin/CellInfo'
+import GameInfo from './pages/admin/GameInfo'
+import GameLog from './pages/admin/GameLog'
+import PlayerInfo from './pages/admin/PlayerInfo'
+
 // Context
 import { AuthContext } from './context/AuthContext'
 import Game from './pages/admin/Game'
@@ -45,7 +50,12 @@ const router = createBrowserRouter(createRoutesFromElements(
 
 		<Route path="admin" element={<RequireAdmin />}>
 			<Route index element={<AdminPage />} />
-			<Route path="game/:hash" element={<Game />}/>
+			<Route path="game/:hash" element={<Game />}>
+				<Route index element={<GameInfo />}/>
+				<Route path="players" element={<PlayerInfo />} />
+				<Route path="ships" element={<CellInfo />}/>
+				<Route path="log" element={<GameLog />}/>
+			</Route>
 		</Route>
 	</Route>
 ))
