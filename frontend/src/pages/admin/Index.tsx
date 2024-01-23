@@ -11,21 +11,40 @@ import Button from "../../components/Button"
 
 import StyledForm, { FieldWrapper } from "../../styles/StyledForm"
 import Input from "../../styles/InputElement"
-import { useState, ChangeEvent, FormEvent } from "react"
+import { useState, ChangeEvent, FormEvent, useEffect } from "react"
+import createGame from "../../api/creategame"
 
 
 function AdminPage() {
+    const [ startedGames, setStartedGames ] = useState([])
     const [ gameData, setGameData ] = useState({
-        "title": "",
-        "size": "",
+        "title": "Game name",
+        "size": 5,
+        "text": "description",
     })
 
+    useEffect(() => {
+        
+    }, [])
+
     function handleInput(e: ChangeEvent<HTMLInputElement>) {
-        setGameData(prev => ({...prev, [e.target.id]: e.target.value}))
+        let value: string | number = e.target.value
+
+        if (e.target.type === "number") {
+            value = parseInt(value)
+        }
+
+        setGameData(prev => ({...prev, [e.target.id]: value}))
     }
 
     function handleSubmit(e: FormEvent) {
-        e.preventDefault()
+        e.preventDefault();
+        (async() => {
+            const hash = await createGame(gameData)
+            console.log("CREATED GAME")
+            console.log(hash)
+            console.log(hash?.link)
+        })()
     }
 
     return (
@@ -43,7 +62,7 @@ function AdminPage() {
                 <Button $color="blue">Просмотреть</Button>
             </GameHistory>
             <BoardCreation>
-                <StyledForm>
+                <StyledForm onSubmit={handleSubmit}>
                     <NavText>Создать новое поле</NavText>
                     <SubText>Место для ошибки</SubText>
                     <FieldWrapper>
@@ -53,6 +72,7 @@ function AdminPage() {
                             <Input
                                 id="title"
                                 type="text"
+                                value={gameData.title}
                                 onChange={handleInput}
                             />
                         </div>
@@ -63,12 +83,13 @@ function AdminPage() {
                             <Input
                                 id="size"
                                 placeholder='От 5 до 20'
-                                type="text"
+                                type="number"
+                                value={gameData.size}
                                 onChange={handleInput}
                             />
                         </div>
                         <br />
-                        <Button $color="black" onClick={handleSubmit}>Создать</Button>
+                        <Button $color="black" type="submit">Создать</Button>
                     </FieldWrapper>
                 </StyledForm>
 

@@ -10,6 +10,7 @@ import Button from '../components/Button'
 import useAuth from '../hooks/useAuth'
 import RequestLogin from '../api/login'
 import { useNavigate } from 'react-router-dom'
+import get_user_data from '../api/userdata'
 
 
 function Login() {
@@ -30,12 +31,14 @@ function Login() {
 			const data = await RequestLogin(userData)
 
 			if (data.status === "success") {
+				const data2 = await get_user_data(data.content.access)
 				login({
 					accessToken: data.content.access,
 					refreshToken: data.content.refresh,
-					username: userData.username,
+					username: data2.username,
+					email: data2.email,
+					id: data2.id,
 				})
-				console.log("NAVIGATING TO PROFILE")
 				navigate("/profile", { replace: true })
 			} else {
 				setError(data.content)
