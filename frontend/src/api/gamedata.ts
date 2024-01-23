@@ -1,46 +1,23 @@
 import { AxiosError } from "axios";
 import api from "./api";
+import { GameData } from "../types/responses";
 
-interface Response {
-    id: number,
-    title: string,
-    status: 1 | 2 | 3,
-    size: number,
-    text: string,
-    link: string,
-    ships: {
-        id: number,
-        cell: {
-            id: number,
-            x: number,
-            y: number,
-            status: number,
-            game: number
-        },
-        game: number,
-        is_alive: boolean,
-        prize: {
-            id: number,
-            title: string,
-            text: string,
-            game: number,
-            winner: null,
-            activation_code: string,
-        }
-    }[]
-}
-
-export default async function get_initial_data() {
+export default async function get_initial_data(hash: string) {
     try {
-        const response = await api.post("/game/", data)
-
-        return null
+        const response = await api.get<GameData>("/game/1")
+        console.log(response.headers)
+        return {
+            "status": "success",
+            "content": response.data,
+        }
     } catch (err) {
         if (err instanceof AxiosError && err.response) {
             return {
                 "status": "error",
                 "content": err.response.data,
             }
+        } else {
+            throw err
         }
     }
 }
