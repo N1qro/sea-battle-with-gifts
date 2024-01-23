@@ -29,6 +29,10 @@ const GlobalStyles = createGlobalStyle`
         color: inherit;
     }
 
+    a.active {
+        font-weight: bold;
+    }
+
     #root {
         min-height: 100vh;
         display: flex;

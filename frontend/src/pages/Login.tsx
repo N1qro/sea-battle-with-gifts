@@ -35,6 +35,7 @@ function Login() {
 				login({
 					accessToken: data.content.access,
 					refreshToken: data.content.refresh,
+					is_superuser: data2.is_superuser,
 					username: data2.username,
 					email: data2.email,
 					id: data2.id,

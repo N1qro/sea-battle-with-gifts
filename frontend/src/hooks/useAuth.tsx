@@ -5,6 +5,8 @@ function useAuth() {
     const { user, addUser, removeUser } = useUser()
 
     function login(user: User) {
+        console.log("Logging in")
+        console.log(user)
         addUser(user)
     }
 

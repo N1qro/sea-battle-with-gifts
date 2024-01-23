@@ -6,12 +6,14 @@ export const ProfileBackground = styled.div`
     grid-template-columns: 3fr 7fr;
     grid-template-rows: 1fr;
 
+    margin-block: auto;
     min-height: 600px;
     padding: 20px 40px;
     border-radius: 31px;
     border: 6px solid #FFF;
     color: black;
     background: #BDCAEA;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
 
     ${NavText} {
         font-weight: 500;

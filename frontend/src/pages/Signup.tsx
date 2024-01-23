@@ -8,11 +8,14 @@ import { SubText } from '../styles/TextStyles'
 import { RegisterFields, RegisterErrors } from '../types/loginForm'
 import useAuth from '../hooks/useAuth'
 import register from '../api/register'
+import get_user_data from '../api/userdata'
+import { useNavigate } from 'react-router-dom'
 
 
 function Signup() {
     const [ error, setError ] = useState<RegisterErrors>({})
     const { login } = useAuth()
+    const navigate = useNavigate()
     const [ userData, setUserData ] = useState<RegisterFields>({
         email: "",
         username: "",
@@ -28,16 +31,24 @@ function Signup() {
         e.preventDefault()
 
         async function makeRequest() {
-            const data = await register(userData)
+            const registerData = await register(userData)
 
-            if (data.status === "error") {
-                setError(data.content)
+            if (registerData.status === "error") {
+                setError(registerData.content)
             } else {
+                console.log(registerData)
+                const additionalData = await get_user_data(registerData.content.access)
+
                 login({
-                    username: userData.username,
-                    accessToken: data.content.access,
-                    refreshToken: data.content.refresh,
+                    id: additionalData.id,
+                    username: additionalData.username,
+                    email: additionalData.email,
+                    is_superuser: additionalData.is_superuser,
+                    accessToken: registerData.content.access,
+                    refreshToken: registerData.content.refresh,
                 })
+
+                navigate("/profile", { replace: true })
             }
         }
 

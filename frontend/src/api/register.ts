@@ -18,7 +18,7 @@ export default async function register(
             throw Error(response.data)
         }
 
-        return await login({username, password})
+        return login({ username, password })
     } catch (err) {
         if (err instanceof AxiosError && err.response) {
             return {
