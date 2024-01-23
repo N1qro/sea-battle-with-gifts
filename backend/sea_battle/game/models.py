@@ -22,6 +22,7 @@ class Game(models.Model):
 
     status = models.IntegerField(
         choices=(
+            (0, "Не опубликована"),
             (1, "Не начата"),
             (2, "Начата"),
             (3, "Окончена"),

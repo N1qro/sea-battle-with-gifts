@@ -2,7 +2,7 @@ from django.db.models import Sum
 from rest_framework import serializers
 
 
-from game.models import Game, Prize, UserShots
+from game.models import Prize, UserShots
 from users import models
 
 
@@ -18,17 +18,17 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
-        fields = ["id", "username", "email"]
+        fields = ["id", "username", "email", "is_superuser"]
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        games = Game.objects.filter(users=instance).count()
+        prizes = Prize.objects.filter(winner=instance).count()
         shots = UserShots.objects.filter(user=instance).aggregate(
             shot_count=Sum("count"),
         )["shot_count"]
 
-        representation["game_count"] = games
+        representation["prize_count"] = prizes
         representation["shot_count"] = shots
 
         return representation
