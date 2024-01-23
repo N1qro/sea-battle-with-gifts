@@ -13,9 +13,11 @@ import StyledForm, { FieldWrapper } from "../../styles/StyledForm"
 import Input from "../../styles/InputElement"
 import { useState, ChangeEvent, FormEvent, useEffect } from "react"
 import createGame from "../../api/creategame"
+import { useNavigate } from "react-router-dom"
 
 
 function AdminPage() {
+    const navigate = useNavigate()
     const [ startedGames, setStartedGames ] = useState([])
     const [ gameData, setGameData ] = useState({
         "title": "Game name",
@@ -41,9 +43,7 @@ function AdminPage() {
         e.preventDefault();
         (async() => {
             const hash = await createGame(gameData)
-            console.log("CREATED GAME")
-            console.log(hash)
-            console.log(hash?.link)
+            navigate(`game/${hash}/`)
         })()
     }
 

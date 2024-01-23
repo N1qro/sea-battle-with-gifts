@@ -7,8 +7,7 @@ export default async function create(
 ) {
     try {
         const response = await api.post("/game/", data)
-
-        return null
+        return response.data.link
     } catch (err) {
         if (err instanceof AxiosError && err.response) {
             return {
