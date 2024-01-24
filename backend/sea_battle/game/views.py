@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from rest_framework import decorators
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,6 +24,27 @@ class GameNotStartedMixin:
             return self.destroy(request, pk)
 
         return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)
+
+
+class FullGameAPIView(APIView):
+    """Get full game data for player"""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        current_game = game.models.Game.objects.get(id=pk)
+        cells = game.models.Cell.objects.filter(game=current_game)
+        cell_serializer = game.serializers.CellSerializer(
+            instance=cells,
+            many=True,
+        )
+
+        game_serializer = game.serializers.GameSerializer(
+            instance=current_game,
+            context={"cells": cell_serializer.data},
+        )
+        return Response(game_serializer.data, status=HTTPStatus.OK)
+
 
 
 class GameAPIView(
@@ -54,13 +76,22 @@ class GameAPIView(
         )
         return Response(game_serializer.data, status=HTTPStatus.OK)
 
+    @decorators.permission_classes([IsAuthenticated])
     def retrieve(self, request, pk=None):
         current_game = game.models.Game.objects.get(id=pk)
         cells = game.models.Cell.objects.filter(game=current_game)
-        cell_serializer = game.serializers.CellWithShipSerializer(
-            instance=cells,
-            many=True,
-        )
+
+        if request.user.is_superuser:
+            cell_serializer = game.serializers.CellWithShipSerializer(
+                instance=cells,
+                many=True,
+            )
+        
+        else:
+            cell_serializer = game.serializers.CellSerializer(
+                instance=cells.filter(status__in=[0, 1, 3]),
+                many=True,
+            )
 
         game_serializer = game.serializers.GameSerializer(
             instance=current_game,
