@@ -14,8 +14,8 @@ class GameSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        if self.context.get("ships"):
-            representation["ships"] = self.context["ships"]
+        if self.context.get("cells"):
+            representation["cells"] = self.context["cells"]
 
         return representation
 
@@ -53,6 +53,22 @@ class CellSerializer(serializers.ModelSerializer):
         fields = ["id", "y", "x", "status", "game"]
 
 
+class CellWithShipSerializer(serializers.ModelSerializer):
+    ship = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Cell
+        fields = ["id", "y", "x", "status", "ship"]
+
+    def get_ship(self, obj):
+        try:
+            ship = models.Ship.objects.get(cell=obj)
+            return ShipWithPrizeSerializer(instance=ship).data
+
+        except models.Ship.DoesNotExist:
+            return {}
+
+
 class ShipSerializer(serializers.ModelSerializer):
     game = serializers.PrimaryKeyRelatedField(
         queryset=models.Game.objects.all(),
@@ -76,12 +92,8 @@ class ShipSerializer(serializers.ModelSerializer):
 
 
 class ShipWithPrizeSerializer(serializers.ModelSerializer):
-    game = serializers.PrimaryKeyRelatedField(
-        queryset=models.Game.objects.all(),
-    )
     prize = PrizeSerializer()
-    cell = CellSerializer()
 
     class Meta:
         model = models.Ship
-        fields = ["id", "cell", "game", "is_alive", "prize"]
+        fields = ["id", "is_alive", "prize"]

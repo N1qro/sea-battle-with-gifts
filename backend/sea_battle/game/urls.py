@@ -1,14 +1,17 @@
 from django.urls import path
+from rest_framework import routers
 
 from game import views
 
 
+router = routers.SimpleRouter()
+router.register(r"prize", views.PrizeAPIView)
+router.register(r"players", views.PlayersAPIView)
+router.register(r"", views.GameAPIView)
+
+
 urlpatterns = [
-    path("", views.GameAPIView.as_view()),
-    path("<int:pk>/", views.GameAPIView.as_view()),
-    path("prize/", views.PrizeAPIView.as_view()),
-    path("prize/<int:pk>", views.PrizeAPIView.as_view()),
     path("shoot/", views.ShootAPIView.as_view()),
-    path("players/", views.PlayersAPIView.as_view()),
-    path("players/<int:pk>", views.PlayersAPIView.as_view()),
 ]
+
+urlpatterns += router.urls
