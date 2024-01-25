@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react"
 import api from "../../api/api"
+import UserPrizeCard from "../../components/UserPrizeCard"
+import { Header4, SubText } from "../../styles/TextStyles"
+import { GiftGrid, GiftSection } from "../../styles/Profile"
 
-interface PrizeInfo {
+
+export interface PrizeInfo {
     id: number,
     title: string,
-    description: string,
-    content: string,
+    text: string,
+    activation_code: string,
 } 
 
 
@@ -28,11 +32,17 @@ function Index() {
         return <p>Loading</p>
     }
 
+    console.log(data)
+
     return (
-        <div>
-            <p>Призы:</p>
-            {data.map(el => <p key={el.id}>{el.title}</p>)}
-        </div>
+        <GiftSection>
+            <Header4>Доступные призы</Header4>
+            <SubText>Чтобы узнать код активации, нажмите на карточку</SubText>
+
+            <GiftGrid>
+                {data.map(el => <UserPrizeCard {...el} key={el.id} />)}
+            </GiftGrid>
+        </GiftSection>
     )
 }
 

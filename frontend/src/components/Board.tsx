@@ -12,7 +12,7 @@ interface BoardData {
 interface BoardProps {
     data: BoardData,
     currentCell: string | null,
-    setCurrentCell: Dispatch<SetStateAction<string | null>>,
+    setCurrentCell: Dispatch<SetStateAction<string>>,
 }
 
 

@@ -5,6 +5,8 @@ import StyledForm, { FieldWrapper } from "../../styles/StyledForm"
 import Input, { TextArea } from "../../styles/InputElement"
 import { CellInfoContainer } from "../../styles/CellInfo"
 import Button from "../../components/Button"
+import { useEffect, useState } from "react"
+import { CellObject } from "../../types/responses"
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -16,15 +18,18 @@ function convertToXY(cell: string) {
 
 function CellInfo() {
     const { selectedCell, gameData } = useOutletContext<OutletContextType>()
+    const [ cellObject, setCellObject ] = useState<CellObject | null>()
     const [ x, y ] = convertToXY(selectedCell)
 
-    const cell = gameData.cells?.filter(val => val.x === x && val.y === y)[0]
-    console.log(cell)
+    useEffect(() => {
+        const cell = gameData.cells?.filter(val => val.x === x && val.y === y)[0]
+        setCellObject(cell || null)
+    }, [gameData, selectedCell])
 
     return (
         <CellInfoContainer>
             <Header4>Информация о клетке {selectedCell}</Header4>
-            <SubText>Статус: {cell ? cell.status : "Не занята"}</SubText>
+            <SubText>Статус: {cellObject ? cellObject.status : "Не занята"}</SubText>
             <StyledForm>
                 <FieldWrapper>
                     <div>
