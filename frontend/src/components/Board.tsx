@@ -2,10 +2,11 @@ import { Dispatch, SetStateAction } from "react";
 import { BoardContainer, Cell } from "../styles/GamePage"
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+import { CellObject } from "../types/responses";
 
 interface BoardData {
     size: number;
-    cells?: {}[];
+    cells: CellObject[] | undefined;
 }
 
 interface BoardProps {

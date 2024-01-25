@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Button from "../components/Button";
-import Input from "./InputElement";
+import Input, { TextArea } from "./InputElement";
 
 const StyledForm = styled.form`
     color: black;
@@ -25,7 +25,7 @@ const StyledForm = styled.form`
         margin-top: 1rem;
     }
 
-    ${Button}, ${Input}, hr {
+    ${Button}, ${Input}, ${TextArea}, hr {
         width: 100%;
     }
 `

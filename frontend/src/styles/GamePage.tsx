@@ -40,6 +40,7 @@ export const Cell = styled.div<{$selected?: boolean}>`
 
 export const BoardContainer = styled.div<{$size: number}>`
     display: grid;
+
     gap: ${props => Math.max(1 - props.$size * 0.1, 0.1)}rem;
     grid-template-columns: repeat(${props => props.$size}, 1fr);
     grid-template-rows: repeat(${props => props.$size}, 1fr);

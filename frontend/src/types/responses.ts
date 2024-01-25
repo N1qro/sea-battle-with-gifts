@@ -1,3 +1,23 @@
+export interface CellObject {
+    id: number,
+    x: number,
+    y: number,
+    status: 1 | 2 | 3 | 4,
+    ship: {
+        id: number,
+        is_alive: boolean,
+        prize: {
+            id: number,
+            game: number,
+            activation_code: string,
+            text: string,
+            title: string,
+            winner: null
+        }
+    } | {}
+}
+
+
 export interface GameData {
     id: number,
     title: string,
@@ -5,24 +25,5 @@ export interface GameData {
     size: number,
     text: string,
     link: string,
-    ships?: {
-        id: number,
-        cell: {
-            id: number,
-            x: number,
-            y: number,
-            status: number,
-            game: number
-        },
-        game: number,
-        is_alive: boolean,
-        prize: {
-            id: number,
-            title: string,
-            text: string,
-            game: number,
-            winner: null,
-            activation_code: string,
-        }
-    }[]
+    cells?: CellObject[]
 }

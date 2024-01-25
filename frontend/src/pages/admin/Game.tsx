@@ -23,12 +23,17 @@ import players_empty from "../../assets/svg/users_empty.svg"
 import prizes_empty from "../../assets/svg/gift_empty.svg"
 import log_empty from "../../assets/svg/document_empty.svg"
 
+export interface OutletContextType {
+    selectedCell: string,
+    gameData: GameData,
+}
+
 
 function Game() {
     const parameters = useParams()
     const navigate = useNavigate()
     const [ gameData, setGameData ] = useState<GameData | null>(null)
-    const [ selectedCell, setSelectedCell ] = useState<string | null>(null)
+    const [ selectedCell, setSelectedCell ] = useState<string>("A0")
 
     useEffect(() => {
         (async () => {
@@ -40,6 +45,8 @@ function Game() {
             }
         })()
     }, [])
+
+    console.log(gameData)
 
     useEffect(() => {
         navigate("ships", { replace: true })
@@ -53,34 +60,34 @@ function Game() {
         <Container>
             <TitleBox>Предпросмотр игрового поля</TitleBox>
             <Board
-                data={{size: 10}}
+                data={{size: gameData.size, cells: gameData.cells}}
                 currentCell={selectedCell}
                 setCurrentCell={setSelectedCell}
             />
             <NavContainer>
-                <NavLink end to="">
+                <NavLink end to="" replace>
                     {({ isActive }) => (
                         <img src={isActive ? info_filled : info_empty} alt="info-link" />
                     )}
                 </NavLink>
-                <NavLink to="players">
+                <NavLink to="players" replace>
                     {({ isActive }) => (
                         <img src={isActive ? players_filled : players_empty} alt="info-link" />
                     )}
                 </NavLink>
-                <NavLink to="ships">
+                <NavLink to="ships" replace>
                     {({ isActive }) => (
                         <img src={isActive ? prizes_filled : prizes_empty} alt="info-link" />
                     )}
                 </NavLink>
-                <NavLink to="log">
+                <NavLink to="log" replace>
                     {({ isActive }) => (
                         <img src={isActive ? log_filled : log_empty} alt="info-link" />
                     )}
                 </NavLink>
             </NavContainer>
             <SidebarContainer>
-                <Outlet context={{selectedCell, hash: parameters.hash}}/>
+                {!!gameData && <Outlet context={{selectedCell, gameData}}/>}
             </SidebarContainer>
         </Container>
     )
