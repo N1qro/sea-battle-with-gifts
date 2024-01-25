@@ -28,6 +28,33 @@ export const ActiveGames = styled(FlexColumn)`
     border-radius: 20px 0px 0px 0px;
     background: rgb(var(--blue-color-2));
     grid-area: active;
+
+    p:last-child {
+        margin-top: auto;
+    }
+`
+
+export const GameContainer = styled.nav`
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-block: 1rem;
+    overflow-y: auto;
+    height: 300px;
+    max-height: 300px;
+`
+
+export const Game = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 9px;
+
+    border-radius: 10px;
+    background: #5B85E9;
+    box-shadow: 0px 1px 6.3px 0px rgba(0, 0, 0, 0.25);
 `
 
 export const BoardCreation = styled(FlexColumn)`
@@ -56,7 +83,7 @@ export const GameHistory = styled(FlexColumn)`
 export const GridContainer = styled.div`
     display: grid;
     gap: 1rem;
-    height: 70vh;
+    height: clamp(100px, 70vh, 100%);
     margin-block: auto;
     color: black;
 

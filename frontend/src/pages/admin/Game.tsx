@@ -42,7 +42,7 @@ function Game() {
     }, [])
 
     useEffect(() => {
-        navigate("ships")
+        navigate("ships", { replace: true })
     }, [selectedCell])
 
     if (!gameData) {

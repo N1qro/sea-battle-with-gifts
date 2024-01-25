@@ -18,6 +18,14 @@ export const subtext_style = css`
     line-height: normal;
 `
 
+export const regular_style = css`
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+`
+
 export const h3_style = css`
     font-family: Outfit, sans-serif;
     font-size: 48px;
@@ -38,3 +46,4 @@ export const Header3 = styled.h3`${h3_style}`
 export const Header4 = styled.h4`${h4_style}`
 export const SubText = styled.p`${subtext_style}`
 export const NavText = styled.p`${navtext_style}`
+export const RegularText = styled.p`${regular_style}`

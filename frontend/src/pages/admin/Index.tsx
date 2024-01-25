@@ -4,17 +4,23 @@ import {
     BoardCreation,
     GridContainer,
     Indicator,
+    GameContainer,
+    Game,
 } from "../../styles/AdminPage"
 
-import { NavText, SubText } from "../../styles/TextStyles"
+import { NavText, SubText, RegularText } from "../../styles/TextStyles"
 import Button from "../../components/Button"
 
 import StyledForm, { FieldWrapper } from "../../styles/StyledForm"
 import Input from "../../styles/InputElement"
 import { useState, ChangeEvent, FormEvent, useEffect } from "react"
 import createGame from "../../api/creategame"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
+import get_all_games from "../../api/allgames"
+
+import user_outline from "../../assets/svg/user_outline.svg"
+import gift from '../../assets/svg/gift.svg'
 
 function AdminPage() {
     const navigate = useNavigate()
@@ -26,7 +32,11 @@ function AdminPage() {
     })
 
     useEffect(() => {
-        
+        (async () => {
+            const game_data = await get_all_games()
+            console.log(game_data)
+            setStartedGames(game_data)
+        })()
     }, [])
 
     function handleInput(e: ChangeEvent<HTMLInputElement>) {
@@ -47,10 +57,25 @@ function AdminPage() {
         })()
     }
 
+    const games = startedGames.map(el => (
+        <Game as={Link} to={`game/${el.link}`} key={el.id}>
+            <RegularText>{el.title}</RegularText>
+            <div>
+                <img src={user_outline} alt="people-amount" />
+                0
+                <img src={gift} alt="assigned-prizes" />
+                0
+            </div>
+        </Game>
+    ))
+
     return (
         <GridContainer>
             <ActiveGames>
                 <NavText>Уже созданные игровые поля</NavText>
+                <GameContainer>
+                    {games}
+                </GameContainer>
                 <p>
                     <Indicator $color="#5B85E9" />Не начатые пользователями игры
                     <Indicator />Активные игры
