@@ -17,13 +17,15 @@ class GameSerializer(serializers.ModelSerializer):
         if self.context.get("cells"):
             representation["cells"] = self.context["cells"]
 
+        if self.context.get("players"):
+            representation["players"] = self.context["players"]
+
         return representation
 
 
 class UserShots(serializers.ModelSerializer):
-    game = serializers.PrimaryKeyRelatedField(
-        queryset=models.Game.objects.all(),
-    )
+    game = serializers.SlugRelatedField(read_only=True, slug_field="link")
+
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
     )
@@ -34,9 +36,7 @@ class UserShots(serializers.ModelSerializer):
 
 
 class PrizeSerializer(serializers.ModelSerializer):
-    game = serializers.PrimaryKeyRelatedField(
-        queryset=models.Game.objects.all(),
-    )
+    game = serializers.SlugRelatedField(read_only=True, slug_field="link")
 
     class Meta:
         model = models.Prize
@@ -44,13 +44,11 @@ class PrizeSerializer(serializers.ModelSerializer):
 
 
 class CellSerializer(serializers.ModelSerializer):
-    game = serializers.PrimaryKeyRelatedField(
-        queryset=models.Game.objects.all(),
-    )
+    game = serializers.SlugRelatedField(read_only=True, slug_field="link")
 
     class Meta:
         model = models.Cell
-        fields = ["id", "y", "x", "status", "game"]
+        fields = ["id", "position", "status", "game"]
 
 
 class CellWithShipSerializer(serializers.ModelSerializer):
@@ -58,7 +56,7 @@ class CellWithShipSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Cell
-        fields = ["id", "y", "x", "status", "ship"]
+        fields = ["id", "position", "status", "ship"]
 
     def get_ship(self, obj):
         try:
@@ -70,9 +68,8 @@ class CellWithShipSerializer(serializers.ModelSerializer):
 
 
 class ShipSerializer(serializers.ModelSerializer):
-    game = serializers.PrimaryKeyRelatedField(
-        queryset=models.Game.objects.all(),
-    )
+    game = serializers.SlugRelatedField(read_only=True, slug_field="link")
+
     prize = serializers.PrimaryKeyRelatedField(
         queryset=models.Prize.objects.all(),
     )

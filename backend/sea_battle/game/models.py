@@ -65,9 +65,10 @@ def update_link(sender, instance, **kwargs):
 
 
 class Cell(models.Model):
-    y = models.PositiveSmallIntegerField()
-
-    x = models.PositiveSmallIntegerField()
+    position = models.CharField(
+        verbose_name="позиция",
+        max_length=25,
+    )
 
     status = models.IntegerField(
         choices=(
