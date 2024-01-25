@@ -9,13 +9,11 @@ import { RegisterFields, RegisterErrors } from '../types/loginForm'
 import useAuth from '../hooks/useAuth'
 import register from '../api/register'
 import get_user_data from '../api/userdata'
-import { useNavigate } from 'react-router-dom'
 
 
 function Signup() {
     const [ error, setError ] = useState<RegisterErrors>({})
     const { login } = useAuth()
-    const navigate = useNavigate()
     const [ userData, setUserData ] = useState<RegisterFields>({
         email: "",
         username: "",
@@ -47,8 +45,6 @@ function Signup() {
                     accessToken: registerData.content.access,
                     refreshToken: registerData.content.refresh,
                 })
-
-                navigate("/profile", { replace: true })
             }
         }
 

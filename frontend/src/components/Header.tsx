@@ -16,7 +16,7 @@ function Header() {
 			</Link>
 			<nav>
 				<NavLink to="about">О проекте</NavLink>
-				{isLoggedIn && <NavLink to="profile">Профиль</NavLink>}
+				{isLoggedIn && !user.is_superuser && <NavLink to="profile">Профиль</NavLink>}
 				{isLoggedIn && user.is_superuser && <NavLink to="admin">Администрирование</NavLink>}
 			</nav>
 			{!user ?

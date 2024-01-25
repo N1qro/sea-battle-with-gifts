@@ -1,4 +1,4 @@
-import { Outlet, useLoaderData } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 import { ProfileBackground, CredentialContainer } from "../styles/Profile"
 import { Header4, SubText, NavText } from "../styles/TextStyles"
 import { NavLink } from "react-router-dom"

@@ -9,13 +9,11 @@ import FormLogo from "../assets/img/form-control.png"
 import Button from '../components/Button'
 import useAuth from '../hooks/useAuth'
 import RequestLogin from '../api/login'
-import { useNavigate } from 'react-router-dom'
 import get_user_data from '../api/userdata'
 
 
 function Login() {
 	const { login } = useAuth()
-	const navigate = useNavigate()
 	const [ error, setError ] = useState<LoginErrors>({})
 	const [ userData, setUserData ] = useState<LoginFields>({
 		username: "",
@@ -40,7 +38,6 @@ function Login() {
 					email: data2.email,
 					id: data2.id,
 				})
-				navigate("/profile", { replace: true })
 			} else {
 				setError(data.content)
 			}

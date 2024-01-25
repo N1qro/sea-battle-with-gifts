@@ -5,7 +5,7 @@ import {
   Route
 } from 'react-router-dom'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { User } from './types/general'
 import { AxiosSettings } from './api/api'
 
@@ -41,9 +41,9 @@ const router = createBrowserRouter(createRoutesFromElements(
 		<Route path="register" element={<Signup />} />
 		<Route path="login" element={<Login />} />
 		<Route path="about" element={<About />}/>
-		<Route path="feedback" element={<Feedback />}/>
 
 		<Route element={<RequireAuth />}>
+			<Route path="feedback" element={<Feedback />}/>
 			<Route path="profile" element={<ProfileLayout />} >
 				<Route index element={<ProfileIndex/>} />
 				<Route path="history" />
