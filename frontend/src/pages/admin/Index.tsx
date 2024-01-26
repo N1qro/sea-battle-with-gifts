@@ -34,7 +34,6 @@ function AdminPage() {
     useEffect(() => {
         (async () => {
             const game_data = await get_all_games()
-            console.log(game_data)
             setStartedGames(game_data)
         })()
     }, [])

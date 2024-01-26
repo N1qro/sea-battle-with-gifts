@@ -4,7 +4,7 @@ import { GameData } from "../types/responses";
 
 export default async function get_initial_data(hash: string) {
     try {
-        const response = await api.get<GameData>("/game/1")
+        const response = await api.get<GameData>(`/game/${hash}`)
         console.log(response.headers)
         return {
             "status": "success",

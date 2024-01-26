@@ -24,6 +24,7 @@ export default function Board(
         for (let j = 0; j < data.size; j++) {
             let content;
             const letter = alphabet[data.size - 1 - i]
+            const coordinate = `${letter}${j}`
             if (i === data.size - 1 && j === 0) {
                 // Левая нижняя клетка
                 content = `${letter} ${j}`
@@ -35,6 +36,7 @@ export default function Board(
                 content = j
             }
 
+            console.log(data)
             cells.push(
                 <Cell
                     key={i * data.size + j}

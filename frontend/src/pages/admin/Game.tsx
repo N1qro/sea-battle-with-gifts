@@ -28,6 +28,18 @@ export interface OutletContextType {
     gameData: GameData,
 }
 
+function getCellBackground(cell: CellObject): "miss" | "cross" | "ship" | null {
+    switch (cell.status) {
+        case 1:
+            return "miss"
+        case 2:
+            return "ship"
+        case 3:
+            return "cross"
+        default:
+            return null
+    }
+}
 
 function Game() {
     const parameters = useParams()
@@ -39,7 +51,11 @@ function Game() {
         (async () => {
             const data = await get_initial_data(parameters.hash!)
             if (data.status === "success") {
-                setGameData(data.content)
+                const newCells = data.content.cells.map(el => (
+                    {...el, background: getCellBackground(el)}
+                ))
+
+                setGameData({...data.content, cells: newCells})
             } else {
                 throw new Error(data.content)
             }

@@ -1,7 +1,6 @@
 export interface CellObject {
     id: number,
-    x: number,
-    y: number,
+    position: string,
     status: 1 | 2 | 3 | 4,
     ship: {
         id: number,
@@ -17,6 +16,24 @@ export interface CellObject {
     } | {}
 }
 
+
+export interface aa {
+    id: number,
+    position: string,
+    status: 1 | 2 | 3 | 4,
+    ship: {
+        id: number,
+        is_alive: boolean,
+        prize: {
+            id: number,
+            game: number,
+            activation_code: string,
+            text: string,
+            title: string,
+            winner: null
+        }
+    } | {}
+}
 
 export interface GameData {
     id: number,

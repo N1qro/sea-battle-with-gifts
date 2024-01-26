@@ -20,10 +20,9 @@ function Index() {
         (async () => {
             try {
                 const prizes = await api.get("user/prizes/")
-                console.log(prizes)
                 setData(prizes.data)
             } catch (err) {
-                console.log(err)
+                console.warn(err)
             }
         })()
     }, [])
@@ -31,8 +30,6 @@ function Index() {
     if (!data) {
         return <p>Loading</p>
     }
-
-    console.log(data)
 
     return (
         <GiftSection>
