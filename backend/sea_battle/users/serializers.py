@@ -34,6 +34,21 @@ class UserSerializer(serializers.ModelSerializer):
         return representation
 
 
+class PlayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.User
+        fields = ["id", "username"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        shots = UserShots.objects.get(user=instance, game=self.context["game"])
+
+        representation["shot_count"] = shots.count
+
+        return representation
+
+
 class InvitesSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
