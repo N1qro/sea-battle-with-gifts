@@ -11,9 +11,10 @@ import { AxiosSettings } from './api/api'
 
 // Layouts
 import RootLayout from './layouts/RootLayout'
-import RequireAuth from './layouts/requireAuth'
+import RequireUser from './layouts/requireAuth'
 import RequireAdmin from './layouts/requireAdmin'
 import ProfileLayout from './layouts/ProfileLayout'
+import AnonymousOnly from './layouts/AnonymousOnly'
 
 // Pages
 import Home from './pages/Home'
@@ -22,6 +23,8 @@ import Signup from './pages/Signup'
 import ProfileIndex from './pages/profile/Index'
 import AdminPage from './pages/admin/Index'
 import About from './pages/About'
+import Game from './pages/admin/Game'
+import Feedback from './pages/Feedback'
 
 import CellInfo from './pages/admin/CellInfo'
 import GameInfo from './pages/admin/GameInfo'
@@ -30,19 +33,19 @@ import PlayerInfo from './pages/admin/PlayerInfo'
 
 // Context
 import { AuthContext } from './context/AuthContext'
-import Game from './pages/admin/Game'
-import Feedback from './pages/Feedback'
 
 
 const router = createBrowserRouter(createRoutesFromElements(
 	<Route element={<RootLayout/>}>
 		<Route index element={<Home/>} />
-
-		<Route path="register" element={<Signup />} />
-		<Route path="login" element={<Login />} />
 		<Route path="about" element={<About />}/>
 
-		<Route element={<RequireAuth />}>
+		<Route element={<AnonymousOnly />}>
+			<Route path="register" element={<Signup />} />
+			<Route path="login" element={<Login />} />
+		</Route>
+
+		<Route element={<RequireUser />}>
 			<Route path="feedback" element={<Feedback />}/>
 			<Route path="profile" element={<ProfileLayout />} >
 				<Route index element={<ProfileIndex/>} />
