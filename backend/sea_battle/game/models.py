@@ -28,7 +28,7 @@ class Game(models.Model):
             (3, "Окончена"),
         ),
         verbose_name="статус",
-        default=1,
+        default=0,
     )
 
     users = models.ManyToManyField(
@@ -145,8 +145,6 @@ class Prize(models.Model):
     activation_code = models.CharField(
         verbose_name="код активации",
         max_length=150,
-        null=True,
-        blank=True,
     )
 
     class Meta:
