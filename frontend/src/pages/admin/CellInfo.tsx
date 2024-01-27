@@ -12,7 +12,7 @@ import create_prize from "../../api/createprize"
 
 
 function CellInfo() {
-    const { selectedCell, gameData } = useOutletContext<OutletContextType>()
+    const { selectedCell, gameData, refetchData } = useOutletContext<OutletContextType>()
     const [ cellObject, setCellObject ] = useState<CellObject | null>()
     const [ formData, setFormData ] = useState({
         text: "",

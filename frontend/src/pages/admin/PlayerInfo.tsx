@@ -10,29 +10,38 @@ import { Header4, RegularText } from "../../styles/TextStyles"
 import { PlayerInfoContainer } from "../../styles/GamePage"
 import remove_player from "../../api/removePlayer"
 import add_player from "../../api/addPlayer"
+import update_player_shots from "../../api/updateplayershots"
 
 
 function PlayerInfo() {
-	const { gameData } = useOutletContext<OutletContextType>()
+	const { gameData, refetchData } = useOutletContext<OutletContextType>()
     const [ formData, setFormData ] = useState({
-        "id": 0,
+        "user": 0,
         "count": 0
     })
 
-    function deletePlayer(e, user_id: number) {
+    function updatePlayer(e) {
         (async () => {
-            const data = await remove_player(user_id, gameData.link)
-            console.log("Removed?")
+            const data = await update_player_shots(formData.user, gameData.link, formData.count)
+            console.log("Updated?")
             console.log(data)
         })()
         e.preventDefault()
     }
 
+    function deletePlayer(e, user_id: number) {
+        (async () => {
+            const data = await remove_player(user_id, gameData.link)
+            console.log(data)
+            refetchData()
+        })()
+    }
+
     function addPlayer(e) {
         (async () => {
-            const data = await add_player()
-            console.log("Added?")
+            const data = await add_player({...formData, game: gameData.link})
             console.log(data)
+            refetchData()
         })()
         e.preventDefault()
     }
@@ -40,9 +49,10 @@ function PlayerInfo() {
     const players = gameData?.players?.map(el => {
         return <>
             <p key={el.id}>
-                {el.id} - ({el.username}) - {el.shot_count}
+                {el.id} - ({el.username}) - {el.count}
                 <Button
                     $color="red"
+                    type="button"
                     onClick={e => deletePlayer(e, el.id)}
                 >Удалить</Button>
             </p>
@@ -54,7 +64,13 @@ function PlayerInfo() {
     }
 
     function handleSubmit(e) {
-        addPlayer(e)
+        if (!!gameData.players?.filter(el => el.id === formData.user)) {
+            console.log("updating!!!")
+            updatePlayer(e)
+        } else {
+            console.log("adding!!!")
+            addPlayer(e)
+        }
     }
 
     return (
@@ -70,9 +86,9 @@ function PlayerInfo() {
                         <label htmlFor="">ID пользователя</label>
                         <br />
                         <Input
-                            id="id"
+                            id="user"
                             onChange={handleInput}
-                            value={formData.id}
+                            value={formData.user}
                         ></Input>
                     </div>
                     <div>

@@ -19,7 +19,7 @@ export interface CellObject {
 export interface PlayerObject {
     id: number,
     username: string,
-    shot_count: number
+    count: number,
 }
 
 export interface GameData {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import { Outlet, useNavigate, useParams } from "react-router-dom"
 import { GameData } from "../../types/responses"
 import get_initial_data from "../../api/gamedata"
@@ -12,6 +12,7 @@ import {
 import Board from "../../components/Board"
 import { NavLink } from "react-router-dom"
 
+import { CellObject } from "../../types/responses"
 // Icons
 import info_filled from "../../assets/svg/info_filled.svg"
 import players_filled from "../../assets/svg/users_filled.svg"
@@ -25,6 +26,7 @@ import log_empty from "../../assets/svg/document_empty.svg"
 
 export interface OutletContextType {
     selectedCell: string,
+    refetchData: () => {},
     gameData: GameData,
 }
 
@@ -41,35 +43,46 @@ function getCellBackground(cell: CellObject): "miss" | "cross" | "ship" | null {
     }
 }
 
+
+async function fetchGameData(hash: string, setFunction: Dispatch<SetStateAction<GameData | null>>) {
+    const data = await get_initial_data(hash)
+
+    if (data.status === "success") {
+        if (data.content.cells) {
+            const newCells = data.content?.cells.map(el => (
+                {...el, background: getCellBackground(el)}
+            ))
+            setFunction({...data.content, cells: newCells})
+        } else {
+            setFunction(data.content)
+        }
+    } else {
+        throw new Error(data.content)
+    }
+}
+
 function Game() {
     const parameters = useParams()
     const navigate = useNavigate()
+    const isInitialMount = useRef(true);
     const [ gameData, setGameData ] = useState<GameData | null>(null)
     const [ selectedCell, setSelectedCell ] = useState<string>("A0")
 
     useEffect(() => {
-        (async () => {
-            const data = await get_initial_data(parameters.hash!)
-            if (data.status === "success") {
-                if (data.content.cells) {
-                    const newCells = data.content?.cells.map(el => (
-                        {...el, background: getCellBackground(el)}
-                    ))
-                    setGameData({...data.content, cells: newCells})
-                } else {
-                    setGameData(data.content)
-                }
-            } else {
-                throw new Error(data.content)
-            }
-        })()
+        fetchGameData(parameters.hash!!, setGameData)
     }, [])
 
-    console.log(gameData)
-
     useEffect(() => {
-        navigate("ships", { replace: true })
+        if (isInitialMount.current) {
+            isInitialMount.current = false
+        } else {
+            navigate("ships", { replace: true })
+        }
     }, [selectedCell])
+
+    function refetchData() {
+        fetchGameData(parameters.hash!!, setGameData)
+    }
 
     if (!gameData) {
         return <p>Loading</p>
@@ -106,7 +119,7 @@ function Game() {
                 </NavLink>
             </NavContainer>
             <SidebarContainer>
-                {!!gameData && <Outlet context={{selectedCell, gameData}}/>}
+                {!!gameData && <Outlet context={{selectedCell, refetchData, gameData}}/>}
             </SidebarContainer>
         </Container>
     )
