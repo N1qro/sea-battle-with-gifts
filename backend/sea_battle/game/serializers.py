@@ -24,7 +24,10 @@ class GameSerializer(serializers.ModelSerializer):
 
 
 class UserShots(serializers.ModelSerializer):
-    game = serializers.SlugRelatedField(read_only=True, slug_field="link")
+    game = serializers.SlugRelatedField(
+        slug_field="link",
+        queryset=models.Game.objects.all(),
+    )
 
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
@@ -36,7 +39,10 @@ class UserShots(serializers.ModelSerializer):
 
 
 class PrizeSerializer(serializers.ModelSerializer):
-    game = serializers.SlugRelatedField(read_only=True, slug_field="link")
+    game = serializers.SlugRelatedField(
+        slug_field="link",
+        queryset=models.Game.objects.all(),
+    )
 
     class Meta:
         model = models.Prize
@@ -44,7 +50,10 @@ class PrizeSerializer(serializers.ModelSerializer):
 
 
 class CellSerializer(serializers.ModelSerializer):
-    game = serializers.SlugRelatedField(read_only=True, slug_field="link")
+    game = serializers.SlugRelatedField(
+        slug_field="link",
+        queryset=models.Game.objects.all(),
+    )
 
     class Meta:
         model = models.Cell
@@ -68,7 +77,10 @@ class CellWithShipSerializer(serializers.ModelSerializer):
 
 
 class ShipSerializer(serializers.ModelSerializer):
-    game = serializers.SlugRelatedField(read_only=True, slug_field="link")
+    game = serializers.SlugRelatedField(
+        slug_field="link",
+        queryset=models.Game.objects.all(),
+    )
 
     prize = serializers.PrimaryKeyRelatedField(
         queryset=models.Prize.objects.all(),

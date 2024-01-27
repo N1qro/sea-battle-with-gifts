@@ -4,9 +4,9 @@ from rest_framework import routers
 from game import views
 
 
-router = routers.SimpleRouter()
+router = routers.DefaultRouter()
 router.register(r"prize", views.PrizeAPIView)
-router.register(r"players", views.PlayersAPIView)
+router.register(r"players", views.PlayersAPIView, basename="Players")
 router.register(r"", views.GameAPIView)
 
 

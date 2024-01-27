@@ -25,11 +25,11 @@ class UserSerializer(serializers.ModelSerializer):
 
         prizes = Prize.objects.filter(winner=instance).count()
         shots = UserShots.objects.filter(user=instance).aggregate(
-            shot_count=Sum("count"),
-        )["shot_count"]
+            count=Sum("count"),
+        )["count"]
 
         representation["prize_count"] = prizes
-        representation["shot_count"] = shots if shots else 0
+        representation["count"] = shots if shots else 0
 
         return representation
 
@@ -44,7 +44,7 @@ class PlayerSerializer(serializers.ModelSerializer):
 
         shots = UserShots.objects.get(user=instance, game=self.context["game"])
 
-        representation["shot_count"] = shots.count
+        representation["count"] = shots.count
 
         return representation
 

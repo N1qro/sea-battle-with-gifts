@@ -14,13 +14,13 @@ import users.serializers
 
 class GameNotStartedMixin:
     def update(self, request, pk, game_link=None):
-        if game.models.Game.objects.get(link=game_link).status == 1:
+        if game.models.Game.objects.get(link=game_link).status in (0, 1):
             return self.update(request, pk)
 
         return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)
 
     def destroy(self, request, pk, game_link=None):
-        if game.models.Game.objects.get(link=game_link).status == 1:
+        if game.models.Game.objects.get(link=game_link).status in (0, 1):
             return self.destroy(request, pk)
 
         return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)
@@ -114,20 +114,12 @@ class PrizeAPIView(
     queryset = game.models.Prize.objects.all()
 
     def list(self, request):
-        prizes = game.models.Prize.objects.all()
-        prizes_serializer = game.serializers.PrizeSerializer(
-            instance=prizes,
-            many=True,
-        )
-        return Response(prizes_serializer.data, status=HTTPStatus.OK)
+        return super().list(request)
 
-    def retrieve(self, request, pk=None):
-        prize = game.models.Prize.objects.get(id=pk)
-        prize_serializer = game.serializers.PrizeSerializer(instance=prize)
+    def retrieve(self, request, pk):
+        return super().retrieve(request)
 
-        return Response(prize_serializer.data, status=HTTPStatus.OK)
-
-    def post(self, request):
+    def create(self, request):
         data = request.data.copy()
 
         prize = game.serializers.PrizeSerializer(data=data)
@@ -174,12 +166,12 @@ class ShootAPIView(APIView):
         if user_shots.count == 0:
             data["error"] = "Нет выстрелов"
 
-        elif cell.status == 1:
-            cell.status = 2
+        elif cell.status == 0:
+            cell.status = 1
             user_shots.count -= 1
 
-        elif cell.status == 3:
-            cell.status = 4
+        elif cell.status == 2:
+            cell.status = 3
             user_shots.count -= 1
 
             ship = game.models.Ship.objects.get(cell=cell)
@@ -223,6 +215,12 @@ class PlayersAPIView(
     serializer_class = game.serializers.UserShots
     queryset = game.models.UserShots.objects.all()
 
+    def list(self, request):
+        return super().list(request)
+
+    def retrieve(self, request, pk):
+        return super().retrieve(request)
+
     def create(self, request):
         user = users.models.User.objects.get(id=request.data.get("user"))
         current_game = game.models.Game.objects.get(
@@ -245,8 +243,15 @@ class PlayersAPIView(
 
     def destroy(self, request, pk):
         current_game = game.models.Game.objects.get(link=request.data["game"])
-        if current_game.status == 1:
-            current_game.users.remove(pk)
-            return self.destroy(request, pk)
+        user = game.models.UserShots.objects.get(pk=pk).user
+
+        if current_game.status in (0, 1):
+            current_game.users.remove(user)
+            game.models.UserShots.objects.get(
+                user=user,
+                game=current_game,
+            ).delete()
+
+            return Response(status=HTTPStatus.OK)
 
         return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)
