@@ -79,7 +79,7 @@ class Cell(models.Model):
             (3, "Стоит уничтоженный корабль"),
         ),
         verbose_name="статус",
-        default=1,
+        default=0,
     )
 
     shot_by = models.ForeignKey(
@@ -107,6 +107,9 @@ class Cell(models.Model):
 
 
 class Prize(models.Model):
+    def prize_imgae_upload_to(self, filename):
+        return f"prize/{self.id}/{filename}"
+
     title = models.CharField(
         verbose_name="название",
         max_length=150,
@@ -114,6 +117,13 @@ class Prize(models.Model):
 
     text = models.TextField(
         verbose_name="описание",
+    )
+
+    image = models.ImageField(
+        upload_to=prize_imgae_upload_to,
+        verbose_name="изображение приза",
+        null=True,
+        blank=True,
     )
 
     winner = models.ForeignKey(
