@@ -51,11 +51,14 @@ function Game() {
         (async () => {
             const data = await get_initial_data(parameters.hash!)
             if (data.status === "success") {
-                const newCells = data.content.cells.map(el => (
-                    {...el, background: getCellBackground(el)}
-                ))
-
-                setGameData({...data.content, cells: newCells})
+                if (data.content.cells) {
+                    const newCells = data.content?.cells.map(el => (
+                        {...el, background: getCellBackground(el)}
+                    ))
+                    setGameData({...data.content, cells: newCells})
+                } else {
+                    setGameData(data.content)
+                }
             } else {
                 throw new Error(data.content)
             }

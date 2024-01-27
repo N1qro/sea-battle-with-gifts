@@ -1,12 +1,14 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, ReactElement, SetStateAction, useCallback, useMemo } from "react";
 import { BoardContainer, Cell } from "../styles/GamePage"
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 import { CellObject } from "../types/responses";
 
+type Cell = CellObject & { background: "ship" | "miss" | "cross" | null }
+
 interface BoardData {
     size: number;
-    cells: CellObject[] | undefined;
+    cells: Cell[] | undefined;
 }
 
 interface BoardProps {
@@ -16,36 +18,56 @@ interface BoardProps {
 }
 
 
-export default function Board(
-    { data, currentCell, setCurrentCell }: BoardProps
-) {
-    let cells = []
-    for (let i = 0; i < data.size; i++) {
-        for (let j = 0; j < data.size; j++) {
-            let content;
-            const letter = alphabet[data.size - 1 - i]
-            const coordinate = `${letter}${j}`
-            if (i === data.size - 1 && j === 0) {
-                // Левая нижняя клетка
-                content = `${letter} ${j}`
-            } else if(j === 0) {
-                // Левый ряд
-                content = letter
-            } else if (i === data.size - 1) {
-                // Нижний ряд
-                content = j
-            }
+function convertToXY(cell: string) {
+    const xPos = alphabet.indexOf(cell.charAt(0))
+    const yPos = parseInt(cell.slice(1))
+    return [ xPos, yPos ]
+}
 
-            console.log(data)
-            cells.push(
+
+function generateInitialBoard(size: number, setCurrentCell, currentCell) {
+    const board: Array<Array<ReactElement>> = Array(size).fill(undefined).map(() => [])
+
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+            const letter = alphabet[i]
+            const position = `${letter}${j}`
+            
+            board[i].push(
                 <Cell
-                    key={i * data.size + j}
-                    onClick={() => setCurrentCell(`${letter}${j}`)}
-                    $selected={currentCell === `${letter}${j}`}
-                >{content}</Cell>
+                    key={position}
+                    onClick={() => setCurrentCell(position)}
+                    $selected={currentCell === position}
+                >
+                    {letter}{j}
+                </Cell>
             )
         }
     }
+    
+    return board
+}
+
+
+export default function Board(
+    { data, currentCell, setCurrentCell }: BoardProps
+) {
+
+    const cells = generateInitialBoard(data.size, setCurrentCell, currentCell)
+
+    data.cells?.forEach((cell) => {
+        const [ x, y ] = convertToXY(cell.position)
+        cells[x][y] = (
+            <Cell
+                key={cell.id}
+                $selected={currentCell === cell.position}
+                $background={cell.background}
+                onClick={() => setCurrentCell(cell.position)}
+            >
+                {cell.position}
+            </Cell>
+        )
+    })
 
     return (
         <BoardContainer $size={data.size}>

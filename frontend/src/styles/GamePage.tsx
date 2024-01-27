@@ -13,8 +13,8 @@ const mapping = {
 
 
 interface CellProps {
-    $selected: boolean;
-    $background: keyof typeof mapping | null;
+    $selected?: boolean;
+    $background?: keyof typeof mapping | null;
     // ship -> стоит корабль (для админа)
     // cross -> попал в корабль (для юзера)
     // miss -> промах (для юзера)
