@@ -68,6 +68,7 @@ class Cell(models.Model):
     position = models.CharField(
         verbose_name="позиция",
         max_length=25,
+        unique=True,
     )
 
     status = models.IntegerField(

@@ -117,7 +117,7 @@ class PrizeAPIView(
         return super().list(request)
 
     def retrieve(self, request, pk):
-        return super().retrieve(request)
+        return super().retrieve(request, pk)
 
     def create(self, request):
         data = request.data.copy()
@@ -126,7 +126,7 @@ class PrizeAPIView(
         prize.is_valid(raise_exception=True)
         prize.save()
 
-        data["prize"] = prize.data
+        data["prize"] = prize.instance.pk
         data["cell"]["game"] = data["game"]
         ship = game.serializers.ShipSerializer(data=data)
         ship.is_valid(raise_exception=True)
@@ -218,9 +218,6 @@ class PlayersAPIView(
     def list(self, request):
         return super().list(request)
 
-    def retrieve(self, request, pk):
-        return super().retrieve(request)
-
     def create(self, request):
         user = users.models.User.objects.get(id=request.data.get("user"))
         current_game = game.models.Game.objects.get(
@@ -239,13 +236,32 @@ class PlayersAPIView(
         return Response(status=HTTPStatus.OK)
 
     def update(self, request, pk):
-        return super().update(request, pk, game_link=request.data["game"])
+        current_game = game.models.Game.objects.get(link=request.data["game"])
+        user = users.models.User.objects.get(pk=pk)
+        user_shots = game.models.UserShots.objects.get(
+            user=user,
+            game=current_game,
+        )
+
+        if current_game.status in (0, 1):
+            serializer = game.serializers.UserShots(
+                instance=user_shots,
+                data=request.data,
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(data=serializer.data, status=HTTPStatus.OK)
+
+        return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)
 
     def destroy(self, request, pk):
         current_game = game.models.Game.objects.get(link=request.data["game"])
         user = users.models.User.objects.get(pk=pk)
         user_shots = game.models.UserShots.objects.get(
-            user=user, game=current_game)
+            user=user,
+            game=current_game,
+        )
 
         if current_game.status in (0, 1):
             current_game.users.remove(user)
