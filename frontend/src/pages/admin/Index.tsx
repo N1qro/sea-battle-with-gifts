@@ -116,7 +116,7 @@ function AdminPage() {
                         <Button $color="black" type="submit">Создать</Button>
                     </FieldWrapper>
                 </StyledForm>
-
+                <Button as={Link} to="http://127.0.0.1:8000/admin" $color="blue">Администрирование базы данных</Button>
             </BoardCreation>
         </GridContainer>
     )

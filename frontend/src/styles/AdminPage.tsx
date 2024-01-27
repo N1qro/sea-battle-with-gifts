@@ -67,6 +67,10 @@ export const BoardCreation = styled(FlexColumn)`
         background: inherit;
         border: inherit;
     }
+
+    ${Button} {
+        text-align: center;
+    }
 `
 
 export const GameHistory = styled(FlexColumn)`

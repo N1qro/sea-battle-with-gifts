@@ -16,23 +16,10 @@ export interface CellObject {
     } | {}
 }
 
-
-export interface aa {
+export interface PlayerObject {
     id: number,
-    position: string,
-    status: 1 | 2 | 3 | 4,
-    ship: {
-        id: number,
-        is_alive: boolean,
-        prize: {
-            id: number,
-            game: number,
-            activation_code: string,
-            text: string,
-            title: string,
-            winner: null
-        }
-    } | {}
+    username: string,
+    shot_count: number
 }
 
 export interface GameData {
@@ -43,4 +30,5 @@ export interface GameData {
     text: string,
     link: string,
     cells?: CellObject[]
+    players?: PlayerObject[]
 }

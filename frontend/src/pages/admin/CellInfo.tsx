@@ -26,7 +26,7 @@ function CellInfo() {
 
     function addPrize(e) {
         (async () => {
-            const data = await create_prize({...formData, game: gameData.link, position: selectedCell})
+            const data = await create_prize({...formData, game: gameData.link, cell: {position: selectedCell}})
             console.log("created?")
             console.log(data)
         })()

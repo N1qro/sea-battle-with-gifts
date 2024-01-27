@@ -1,8 +1,9 @@
 import styled from "styled-components";
-import { h4_style } from "./TextStyles";
+import { Header4, h4_style } from "./TextStyles";
 import gift from "../assets/img/gift.png"
 import cross from "../assets/img/cross.png"
 import circle from "../assets/img/circle.png"
+import StyledForm from "./StyledForm";
 
 
 const mapping = {
@@ -99,4 +100,28 @@ export const SidebarContainer = styled.aside`
     padding: 10px;
     box-shadow: 1px 5px 5px 0 rgba(0, 0, 0, 0.25);
     aspect-ratio: 2 / 3;
+`
+
+
+export const PlayerInfoContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-block: 2rem;
+
+    ${StyledForm} {
+        background: inherit;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0 auto;
+    }
+
+    ${Header4} {
+        text-align: center;
+    }
+
+    ${Header4}:last-of-type {
+        margin-top: auto;
+    }
 `
