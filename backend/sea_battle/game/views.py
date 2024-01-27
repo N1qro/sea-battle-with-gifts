@@ -243,14 +243,13 @@ class PlayersAPIView(
 
     def destroy(self, request, pk):
         current_game = game.models.Game.objects.get(link=request.data["game"])
-        user = game.models.UserShots.objects.get(pk=pk).user
+        user = users.models.User.objects.get(pk=pk)
+        user_shots = game.models.UserShots.objects.get(
+            user=user, game=current_game)
 
         if current_game.status in (0, 1):
             current_game.users.remove(user)
-            game.models.UserShots.objects.get(
-                user=user,
-                game=current_game,
-            ).delete()
+            user_shots.delete()
 
             return Response(status=HTTPStatus.OK)
 
