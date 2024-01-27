@@ -1,7 +1,7 @@
 import { useOutletContext } from "react-router-dom"
 import { OutletContextType } from "./Game"
 import { Header4, SubText } from "../../styles/TextStyles"
-import StyledForm, { FieldWrapper } from "../../styles/StyledForm"
+import StyledForm, { FieldWrapper, FormError } from "../../styles/StyledForm"
 import Input, { TextArea } from "../../styles/InputElement"
 import { CellInfoContainer } from "../../styles/CellInfo"
 import Button from "../../components/Button"
@@ -9,11 +9,13 @@ import { useEffect, useState, ChangeEvent } from "react"
 import { CellObject } from "../../types/responses"
 import delete_prize from "../../api/deleteprize"
 import create_prize from "../../api/createprize"
+import change_prize from "../../api/changeprize"
 
 
 function CellInfo() {
     const { selectedCell, gameData, refetchData } = useOutletContext<OutletContextType>()
     const [ cellObject, setCellObject ] = useState<CellObject | null>()
+    const [ error, setError ] = useState("")
     const [ formData, setFormData ] = useState({
         text: "",
         title: "",
@@ -24,11 +26,27 @@ function CellInfo() {
         setFormData(prev => ({...prev, [e.target.id]: e.target.value}))
     }
 
+    function changePrize(e) {
+        (async () => {
+            const data = await change_prize(cellObject?.ship.prize?.id, {...formData, game: gameData.link })
+            if (data.status === "error") {
+                setError(data.content)
+            } else {
+                refetchData()
+            }
+        })()
+        e.preventDefault()
+    }
+
     function addPrize(e) {
         (async () => {
             const data = await create_prize({...formData, game: gameData.link, cell: {position: selectedCell}})
-            console.log("created?")
-            console.log(data)
+            if (data.status === "error") {
+                setError(data.content)
+            } else {
+                setError("")
+                refetchData()
+            }
         })()
         e.preventDefault()
     }
@@ -36,8 +54,11 @@ function CellInfo() {
     function deletePrize(e, id, gameLink) {
         (async () => {
             const data = await delete_prize(id, gameLink)
-            console.log("Deleted")
-            console.log(data)
+            if (data.status === "error") {
+                setError(data.content)
+            } else {
+                refetchData()
+            } 
         })()
         e.preventDefault()
     }
@@ -45,14 +66,13 @@ function CellInfo() {
     useEffect(() => {
         const cell = gameData.cells?.filter(val => val.position === selectedCell)[0]
         setCellObject(cell || null)
+        setError("")
         setFormData({
             text: cell?.ship.prize?.text || "",
             title: cell?.ship.prize?.title || "",
             activation_code: cell?.ship.prize?.activation_code || "",
         })
     }, [gameData, selectedCell])
-
-    console.log(cellObject)
 
     return (
         <CellInfoContainer>
@@ -69,11 +89,13 @@ function CellInfo() {
                             value={formData.title}
                             placeholder="Подарочная карта на 1000Р"
                         ></Input>
+                        <FormError>{error.title}</FormError>
                     </div>
                     <div>
                         <label htmlFor="">Описание</label>
                         <br />
                         <TextArea onChange={handleTextInput} value={formData.text} name="description" id="text"></TextArea>
+                        <FormError>{error.text}</FormError>
                     </div>
                     <div>
                         <label htmlFor="">Содержимое</label>
@@ -84,6 +106,8 @@ function CellInfo() {
                             value={formData.activation_code}
                             placeholder="Ссылка или код"
                         ></Input>
+                        <FormError>{error.activation_code}</FormError>
+                        <FormError>{error.details}</FormError>
                     </div>
                     {/* <div>
                         <label htmlFor="">Изображение</label>
@@ -96,6 +120,10 @@ function CellInfo() {
                         $color="green"
                         onClick={addPrize}
                     >Добавить приз</Button>}
+                    {cellObject && <Button
+                        $color="red"
+                        onClick={e => changePrize(e, cellObject.ship.prize.id, gameData.link)}
+                    >Изменить приз</Button>}
                     {cellObject && <Button
                         $color="red"
                         onClick={e => deletePrize(e, cellObject.ship.prize.id, gameData.link)}

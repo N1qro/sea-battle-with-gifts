@@ -2,12 +2,12 @@ import { AxiosError } from "axios";
 import api from "./api";
 
 
-export default async function create_prize(data) {
+export default async function change_prize(prize_id: number, data) {
     try {
-        const response = await api.post(`game/prize/`, data)
+        const response = await api.put(`game/prize/${prize_id}/`, data)
         return {
             "status": "success",
-            "content": response.data,
+            "content": response.data
         }
     } catch (err) {
         if (err instanceof AxiosError && err.response) {

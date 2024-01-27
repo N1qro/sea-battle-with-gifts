@@ -2,14 +2,9 @@ import { AxiosError } from "axios";
 import api from "./api";
 
 
-export default async function update_player_shots(user_id: number, game: string, count: number) {
+export default async function delete_game(link) {
     try {
-        const data = {
-            count: count,
-            user: user_id,
-            game: game,
-        }
-        const response = await api.put(`game/players/${user_id}/`, data)
+        const response = await api.delete(`game/${link}/`)
         return response.data
     } catch (err) {
         if (err instanceof AxiosError && err.response) {

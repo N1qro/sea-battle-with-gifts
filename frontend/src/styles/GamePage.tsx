@@ -1,9 +1,10 @@
 import styled from "styled-components";
-import { Header4, h4_style } from "./TextStyles";
+import { Header4, SubText, h4_style } from "./TextStyles";
 import gift from "../assets/img/gift.png"
 import cross from "../assets/img/cross.png"
 import circle from "../assets/img/circle.png"
 import StyledForm from "./StyledForm";
+import Button from "../components/Button";
 
 
 const mapping = {
@@ -117,6 +118,10 @@ export const PlayerInfoContainer = styled.div`
         margin: 0 auto;
     }
 
+    ${SubText} {
+        text-align: center;
+    }
+
     ${Header4} {
         text-align: center;
     }
@@ -124,4 +129,31 @@ export const PlayerInfoContainer = styled.div`
     ${Header4}:last-of-type {
         margin-top: auto;
     }
+`
+
+export const PlayerCard = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    color: #0f0070;
+
+    border-radius: 10px;
+    background: #5B85E9;
+    box-shadow: 0px 1px 6.3px 0px rgba(0, 0, 0, 0.25);
+
+    ${Button} {
+        padding: 5px 9px;
+        margin-left: 1rem;
+    }
+`
+
+export const PlayerContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.5rem;
+    gap: 0.5rem;
+    max-height: 288px;
+    overflow-y: auto;
 `

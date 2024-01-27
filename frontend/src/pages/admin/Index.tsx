@@ -8,7 +8,7 @@ import {
     Game,
 } from "../../styles/AdminPage"
 
-import { NavText, SubText, RegularText } from "../../styles/TextStyles"
+import { NavText, SubText, RegularText, Header4, Header5 } from "../../styles/TextStyles"
 import Button from "../../components/Button"
 
 import StyledForm, { FieldWrapper } from "../../styles/StyledForm"
@@ -72,9 +72,10 @@ function AdminPage() {
         <GridContainer>
             <ActiveGames>
                 <NavText>Уже созданные игровые поля</NavText>
-                <GameContainer>
-                    {games}
-                </GameContainer>
+                {games.length !== 0 ? 
+                    <GameContainer>{games}</GameContainer> :
+                    <Header5>У вас ещё нет созданных игр!</Header5>
+                }
                 <p>
                     <Indicator $color="#5B85E9" />Не начатые пользователями игры
                     <Indicator />Активные игры

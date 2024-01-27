@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { NavText, SubText } from "./TextStyles";
+import { Header4, Header5, NavText, RegularText, SubText } from "./TextStyles";
 import Button from "../components/Button";
 import StyledForm from "./StyledForm";
 
@@ -28,6 +28,11 @@ export const ActiveGames = styled(FlexColumn)`
     border-radius: 20px 0px 0px 0px;
     background: rgb(var(--blue-color-2));
     grid-area: active;
+
+    ${Header5} {
+        height: 300px;
+        text-align: center;
+    }
 
     p:last-child {
         margin-top: auto;
