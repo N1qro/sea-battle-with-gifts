@@ -64,6 +64,10 @@ class GameAPIView(ModelViewSet):
                 instance=cells.filter(status__in=[0, 1, 3]),
                 many=True,
             )
+            context["count"] = game.models.UserShots.objects.get(
+                user=request.user,
+                game=current_game,
+            ).count
 
         context["cells"] = cell_serializer.data
         game_serializer = game.serializers.GameSerializer(
