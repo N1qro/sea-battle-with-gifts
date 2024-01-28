@@ -218,7 +218,6 @@ class UserTests(APITestCase):
 
         expected_data = {
             "before_cell_status": 0,
-            "count": 1,
             "after_cell_status": 1,
         }
 
@@ -257,7 +256,6 @@ class UserTests(APITestCase):
 
         expected_data = {
             "before_cell_status": 0,
-            "count": 0,
             "after_cell_status": 0,
             "error": "Нет выстрелов",
         }

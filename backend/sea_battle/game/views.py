@@ -205,21 +205,21 @@ class ShootAPIView(APIView):
             ship.is_alive = False
             ship.save()
 
-            prize = game.models.Prize.objects.get(
-                game.serializers.ShipSerializer(ship).data["prize"],
-            )
+            prize = ship.prize
 
             prize.winner = request.user
             prize.save()
 
             data["prize"] = game.serializers.PrizeSerializer(
-                game.models.Prize.objects.get(prize),
+                prize,
             ).data
+
+        if current_game.status == 1:
+            current_game.status = 2
 
         cell.save()
         user_shots.save()
 
-        data["count"] = user_shots.count
         data["after_cell_status"] = cell.status
 
         return Response(data=data, status=HTTPStatus.OK)
