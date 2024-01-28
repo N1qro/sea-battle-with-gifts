@@ -1,6 +1,6 @@
 import { useOutletContext } from "react-router-dom"
 import { OutletContextType } from "./Game"
-import { Header4, SubText } from "../../styles/TextStyles"
+import { Header4, Header5, SubText } from "../../styles/TextStyles"
 import StyledForm, { FieldWrapper, FormError } from "../../styles/StyledForm"
 import Input, { TextArea } from "../../styles/InputElement"
 import { CellInfoContainer } from "../../styles/CellInfo"
@@ -98,6 +98,7 @@ function CellInfo() {
                         <br />
                         <Input
                             id="title"
+                            disabled={gameData.status !== 0}
                             onChange={handleTextInput}
                             value={formData.title}
                             placeholder="Подарочная карта на 1000Р"
@@ -107,7 +108,13 @@ function CellInfo() {
                     <div>
                         <label htmlFor="">Описание</label>
                         <br />
-                        <TextArea onChange={handleTextInput} value={formData.text} name="description" id="text"></TextArea>
+                        <TextArea
+                            onChange={handleTextInput}
+                            value={formData.text}
+                            disabled={gameData.status !== 0}
+                            name="description"
+                            id="text"
+                        />
                         <FormError>{error.text}</FormError>
                     </div>
                     <div>
@@ -117,6 +124,7 @@ function CellInfo() {
                             id="activation_code"
                             onChange={handleTextInput}
                             value={formData.activation_code}
+                            disabled={gameData.status !== 0}
                             placeholder="Ссылка или код"
                         ></Input>
                         <FormError>{error.activation_code}</FormError>
@@ -126,24 +134,29 @@ function CellInfo() {
                         <label htmlFor="">Изображение</label>
                         <br />
                         <Input
+                            disabled={gameData.status !== 0}
                             type="file"
                             onChange={handleFileInput}
                         ></Input>
                     </div>
                     {!cellObject && <Button
+                        disabled={gameData.status !== 0}
                         $color="green"
                         onClick={addPrize}
                     >Добавить приз</Button>}
                     {cellObject && <Button
+                        disabled={gameData.status !== 0}
                         $color="red"
                         onClick={e => changePrize(e, cellObject.ship.prize.id, gameData.link)}
                     >Изменить приз</Button>}
                     {cellObject && <Button
+                        disabled={gameData.status !== 0}
                         $color="red"
                         onClick={e => deletePrize(e, cellObject.ship.prize.id, gameData.link)}
                     >Удалить приз</Button>}
                 </FieldWrapper>
             </StyledForm>
+            {gameData.status !== 0 && <FormError>Редактирование запрещено, игра опубликована или уже завершена</FormError>}
         </CellInfoContainer>
     )
 }

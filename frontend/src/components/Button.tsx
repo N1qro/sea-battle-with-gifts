@@ -24,6 +24,10 @@ const Button = styled.button<ButtonProps>`
 	line-height: normal;
 	cursor: pointer;
 
+	&:disabled {
+		cursor: default;
+	}
+
 	background-color: ${
 		props => props.$state !== "empty" ?
 		colorMapping[props.$color] :

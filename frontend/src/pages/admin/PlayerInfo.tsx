@@ -56,25 +56,6 @@ function PlayerInfo() {
         e.preventDefault()
     }
 
-    const players = gameData?.players?.map(user => {
-        return (
-            <PlayerCard key={user.id}>
-                <div>
-                    <RegularText>{user.username}</RegularText>
-                    <p>UID: {user.id}</p>
-                </div>
-                <p>
-                    Патронов: {user.count}
-                    <Button
-                        $color="red"
-                        type="button"
-                        onClick={e => deletePlayer(e, user.id)}
-                    >X</Button>
-                </p>
-            </PlayerCard>
-        )
-    })
-
     function validate(hadPreviously: number) {
         const maxCount = gameData.size * gameData.size
 
@@ -117,6 +98,26 @@ function PlayerInfo() {
         }
     }
 
+    const players = gameData?.players?.map(user => {
+        return (
+            <PlayerCard key={user.id}>
+                <div>
+                    <RegularText>{user.username}</RegularText>
+                    <p>UID: {user.id}</p>
+                </div>
+                <p>
+                    Патронов: {user.count}
+                    <Button
+                        disabled={gameData.status !== 0}
+                        $color="red"
+                        type="button"
+                        onClick={e => deletePlayer(e, user.id)}
+                    >X</Button>
+                </p>
+            </PlayerCard>
+        )
+    })
+
     return (
         <PlayerInfoContainer>
             <Header4>Добавленные игроки</Header4>
@@ -131,6 +132,7 @@ function PlayerInfo() {
                         <label htmlFor="">ID пользователя</label>
                         <br />
                         <Input
+                            disabled={gameData.status !== 0}
                             id="user"
                             onChange={handleInput}
                             value={formData.user}
@@ -141,6 +143,7 @@ function PlayerInfo() {
                         <label htmlFor="">Количество выстрелов</label>
                         <br />
                         <Input
+                            disabled={gameData.status !== 0}
                             id="count"
                             onChange={handleInput}
                             value={formData.count}
@@ -148,9 +151,11 @@ function PlayerInfo() {
                     </div>
                     {error.count && <FormError>{error.count}</FormError>}
                     {error.details && <FormError>{error.details}</FormError>}
-                    <Button $color="black">Добавить</Button>
+                    <Button disabled={gameData.status !== 0} $color="black">Добавить</Button>
                 </FieldWrapper>
             </StyledForm>
+
+            {gameData.status !== 0 && <FormError>Редактирование запрещено, игра опубликована или уже завершена</FormError>}
         </PlayerInfoContainer>
     )
 }

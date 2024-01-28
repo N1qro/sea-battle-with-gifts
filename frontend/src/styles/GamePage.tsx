@@ -3,7 +3,7 @@ import { Header4, SubText, h4_style } from "./TextStyles";
 import gift from "../assets/img/gift.png"
 import cross from "../assets/img/cross.png"
 import circle from "../assets/img/circle.png"
-import StyledForm from "./StyledForm";
+import StyledForm, { FormError } from "./StyledForm";
 import Button from "../components/Button";
 
 
@@ -118,11 +118,11 @@ export const PlayerInfoContainer = styled.div`
         margin: 0 auto;
     }
 
-    ${SubText} {
-        text-align: center;
+    ${FormError} {
+        max-width: none;
     }
 
-    ${Header4} {
+    ${SubText}, ${Header4}, ${FormError} {
         text-align: center;
     }
 
