@@ -14,6 +14,7 @@ class GameSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+
         if self.context.get("cells"):
             representation["cells"] = self.context["cells"]
 
@@ -22,6 +23,14 @@ class GameSerializer(serializers.ModelSerializer):
 
         if self.context.get("count"):
             representation["count"] = self.context["count"]
+
+        if self.context.get("players_count"):
+            representation["players_count"] = instance.users.count()
+
+        if self.context.get("prizes_count"):
+            representation["prizes_count"] = models.Prize.objects.filter(
+                game=instance,
+            ).count()
 
         return representation
 

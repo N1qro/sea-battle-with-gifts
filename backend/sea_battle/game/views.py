@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from rest_framework import decorators
+from rest_framework import decorators, generics
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,6 +10,21 @@ import game.models
 import game.serializers
 import users.models
 import users.serializers
+
+
+class GameFinishedAPIView(generics.ListAPIView):
+    serializer_class = game.serializers.GameSerializer
+    queryset = game.models.Game.objects.all()
+    permission_classes = [IsAdminUser]
+
+    def list(self, request):
+        games = game.models.Game.objects.filter(status=3)
+        game_serializer = game.serializers.GameSerializer(
+            instance=games,
+            many=True,
+            context={"players_count": True, "prizes_count": True},
+        )
+        return Response(game_serializer.data, status=HTTPStatus.OK)
 
 
 class GameAPIView(ModelViewSet):
@@ -30,8 +45,9 @@ class GameAPIView(ModelViewSet):
     queryset = game.models.Game.objects.all()
     lookup_field = "link"
 
+    @decorators.permission_classes([IsAdminUser])
     def list(self, request):
-        games = game.models.Game.objects.all()
+        games = game.models.Game.objects.filter(status__in=[0, 1, 2])
         game_serializer = game.serializers.GameSerializer(
             instance=games,
             many=True,
@@ -205,7 +221,8 @@ class ShootAPIView(APIView):
             cell.status = 3
             user_shots.count -= 1
 
-            ship = game.models.Ship.objects.get(cell=cell)
+            ship = game.models.Ship.objects.get(cell=cell, game=current_game)
+
             ship.is_alive = False
             ship.save()
 
@@ -220,6 +237,7 @@ class ShootAPIView(APIView):
 
         if current_game.status == 1:
             current_game.status = 2
+            current_game.save()
 
         cell.save()
         user_shots.save()
