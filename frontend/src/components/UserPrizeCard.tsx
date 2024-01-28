@@ -4,8 +4,10 @@ import { PrizeInfo } from "../pages/profile/Index"
 import { MouseEventHandler, useState } from "react"
 import { Header4 } from "../styles/TextStyles"
 import Button from "./Button"
+import { PrependBackendURI } from "../utils"
 
-function UserPrizeCard({ title, text, activation_code }: PrizeInfo) {
+
+function UserPrizeCard({ title, text, activation_code, image }: PrizeInfo) {
     const [ isPopupShowing, setIsPopupShowing ] = useState(false)
 
     function hidePopup(e: any) {
@@ -19,13 +21,14 @@ function UserPrizeCard({ title, text, activation_code }: PrizeInfo) {
                 <AbsoluteWindow>
                     <ActivationCodePopup>
                         <Header4>Код активации подарка</Header4>
+                        <img src={PrependBackendURI(image)} alt="" />
                         <p>{activation_code}</p>
                         <Button $color="black" onClick={hidePopup}>Закрыть</Button>
                     </ActivationCodePopup>
                 </AbsoluteWindow>
             }
 
-            <UserGiftMain>
+            <UserGiftMain $background={image && PrependBackendURI(image)}>
                 <NavText>{title}</NavText>
                 <SubText>{text}</SubText>
             </UserGiftMain>

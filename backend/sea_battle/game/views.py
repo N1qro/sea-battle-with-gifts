@@ -126,9 +126,19 @@ class PrizeAPIView(
         prize.is_valid(raise_exception=True)
         prize.save()
 
-        data["prize"] = prize.instance.pk
-        data["cell"]["game"] = data["game"]
-        ship = game.serializers.ShipSerializer(data=data)
+        new_data = {
+            "text": data.get("text"),
+            "title": data.get("title"),
+            "activation_code": data.get("activation_code"),
+            "game": data.get("game"),
+            "prize": prize.instance.pk,
+            "cell": {
+                "game": data.get("game"),
+                "position": data.get("cell[position]"),
+            }
+        }
+
+        ship = game.serializers.ShipSerializer(data=new_data)
         ship.is_valid(raise_exception=True)
         ship.save()
 

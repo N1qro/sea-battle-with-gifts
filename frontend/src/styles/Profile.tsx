@@ -48,12 +48,15 @@ export const GiftContainer = styled.div`
     height: 150px;
 `
 
-export const UserGiftMain = styled.div`
+export const UserGiftMain = styled.div<{$background?: string | null}>`
     padding: 10px;
     height: 80%;
     overflow: hidden;
     border-radius: 10px 10px 0px 0px;
-    background: linear-gradient(180deg, rgba(79, 126, 237, 0.50) 0%, #3867D6 100%);
+    background: url(${props => props.$background}), linear-gradient(180deg, rgba(79, 126, 237, 0.50) 0%, #3867D6 100%);
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
 `
 
 export const UserGiftStripe = styled.div`
@@ -85,8 +88,10 @@ export const ActivationCodePopup = styled.div`
     padding: 2rem;
     border-radius: 20px;
     background-color: #2172e3c3;
-    width: 500px;
-    height: 300px;
+    
+    img {
+        max-width: 700px;
+    }
 `
 
 export const GiftGrid = styled.div`
