@@ -147,6 +147,15 @@ class ShootAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        if request.user.is_superuser:
+            return Response(
+                data={
+                    "detail": "Вы не можете стрелять,"
+                    "так как являетесь администратором",
+                },
+                status=HTTPStatus.BAD_REQUEST,
+            )
+
         current_game = game.models.Game.objects.get(
             link=request.data.get("game"),
         )
@@ -220,6 +229,15 @@ class PlayersAPIView(
 
     def create(self, request):
         user = users.models.User.objects.get(id=request.data.get("user"))
+
+        if user.is_superuser:
+            return Response(
+                data={
+                    "detail": "Вы не можете добавлять в игру администраторов",
+                },
+                status=HTTPStatus.BAD_REQUEST,
+            )
+
         current_game = game.models.Game.objects.get(
             link=request.data.get("game"),
         )

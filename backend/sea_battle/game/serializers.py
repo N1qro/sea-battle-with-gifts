@@ -46,7 +46,15 @@ class PrizeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Prize
-        fields = ["id", "title", "text", "game", "winner", "activation_code"]
+        fields = [
+            "id",
+            "title",
+            "text",
+            "image",
+            "game",
+            "winner",
+            "activation_code",
+        ]
 
 
 class CellSerializer(serializers.ModelSerializer):
@@ -93,7 +101,7 @@ class ShipSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         cell = models.Cell.objects.create(
-            status=3,
+            status=2,
             **validated_data.pop("cell"),
         )
 
