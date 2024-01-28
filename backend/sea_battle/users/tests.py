@@ -23,6 +23,7 @@ class UserTests(APITestCase):
             title="test",
             text="text",
             size=10,
+            status=1,
         )
         self.game.users.add(self.user)
         self.game.save()
@@ -111,6 +112,8 @@ class UserTests(APITestCase):
         self.assertEqual(json.loads(response.content), data)
 
     def test_user_invites_api(self):
+        self.game.status = 2
+        self.game.save()
         data = [
             {
                 "id": 1,
@@ -127,6 +130,8 @@ class UserTests(APITestCase):
         self.assertEqual(json.loads(response.content), data)
 
     def test_user_games_api(self):
+        self.game.status = 3
+        self.game.save()
         data = [
             {
                 "id": 1,

@@ -20,6 +20,9 @@ class GameSerializer(serializers.ModelSerializer):
         if self.context.get("players"):
             representation["players"] = self.context["players"]
 
+        if self.context.get("count"):
+            representation["count"] = self.context["count"]
+
         return representation
 
 
