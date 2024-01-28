@@ -5,7 +5,10 @@ import api from "./api";
 export default async function add_player(data) {
     try {
         const response = await api.post(`game/players/`, data)
-        return response.data
+        return {
+            "status": "success",
+            "content": response.data,
+        }
     } catch (err) {
         if (err instanceof AxiosError && err.response) {
             return {
@@ -13,5 +16,9 @@ export default async function add_player(data) {
                 "content": err.response.data,
             }
         }
+    }
+    return {
+        "status": "error",
+        "content": {"details": "Что-то пошло не так"}
     }
 }

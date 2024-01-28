@@ -11,19 +11,21 @@ import {
 import { NavText, SubText, RegularText, Header4, Header5 } from "../../styles/TextStyles"
 import Button from "../../components/Button"
 
-import StyledForm, { FieldWrapper } from "../../styles/StyledForm"
-import Input from "../../styles/InputElement"
+import StyledForm, { FieldWrapper, FormError } from "../../styles/StyledForm"
+import Input, { TextArea } from "../../styles/InputElement"
 import { useState, ChangeEvent, FormEvent, useEffect } from "react"
 import createGame from "../../api/creategame"
-import { Link, useNavigate } from "react-router-dom"
+import { Form, Link, useNavigate } from "react-router-dom"
 
 import get_all_games from "../../api/allgames"
 
 import user_outline from "../../assets/svg/user_outline.svg"
 import gift from '../../assets/svg/gift.svg'
+import { FlexRow } from "../../styles/GlobalStyles"
 
 function AdminPage() {
     const navigate = useNavigate()
+    const [ error, setError ] = useState({})
     const [ startedGames, setStartedGames ] = useState([])
     const [ gameData, setGameData ] = useState({
         "title": "Game name",
@@ -42,29 +44,52 @@ function AdminPage() {
         let value: string | number = e.target.value
 
         if (e.target.type === "number") {
-            value = parseInt(value)
+            value = parseInt(value) || 0
         }
 
         setGameData(prev => ({...prev, [e.target.id]: value}))
     }
 
+    function validate() {
+        if (gameData.size < 5) {
+            setError({size: "Размер поля не может быть меньше 5"})
+            return false
+        } else if (gameData.size > 18) {
+            setError({size: "Размер поля не может быть больше 18"})
+            return false
+        }
+
+        setError({})
+        return true
+    }
+
     function handleSubmit(e: FormEvent) {
         e.preventDefault();
+        if (!validate()) { return }
+
         (async() => {
-            const hash = await createGame(gameData)
-            navigate(`game/${hash}/`)
+            const response = await createGame(gameData)
+            if (response.status === "success") {
+                navigate(`game/${response.content}/`)
+            } else {
+                setError(response.content)
+            }
         })()
     }
 
     const games = startedGames.map(el => (
-        <Game as={Link} to={`game/${el.link}`} key={el.id}>
+        <Game as={Link} to={`game/${el.link}`} $isActive={el.status === 2} key={el.id}>
             <RegularText>{el.title}</RegularText>
-            <div>
-                <img src={user_outline} alt="people-amount" />
-                0
-                <img src={gift} alt="assigned-prizes" />
-                0
-            </div>
+            <FlexRow>
+                <div>
+                    <img src={user_outline} alt="people-amount" />
+                    0
+                </div>
+                <div>
+                    <img src={gift} alt="assigned-prizes" />
+                    0
+                </div>
+            </FlexRow>
         </Game>
     ))
 
@@ -88,8 +113,7 @@ function AdminPage() {
             </GameHistory>
             <BoardCreation>
                 <StyledForm onSubmit={handleSubmit}>
-                    <NavText>Создать новое поле</NavText>
-                    <SubText>Место для ошибки</SubText>
+                    <Header5>Создать новое поле</Header5>
                     <FieldWrapper>
                         <div>
                             <label htmlFor="">Название игры</label>
@@ -101,9 +125,20 @@ function AdminPage() {
                                 onChange={handleInput}
                             />
                         </div>
-                
+                        {error.title && <FormError>{error.title}</FormError>}
                         <div>
-                            <label htmlFor="">Размер стороны поля</label>
+                            <label htmlFor="">Описание игры</label>
+                            <br />
+                            <TextArea
+                                id="text"
+                                type="text"
+                                value={gameData.text}
+                                onChange={handleInput}
+                            />
+                        </div>
+                        {error.text && <FormError>{error.text}</FormError>}
+                        <div>
+                            <label htmlFor="">Размер стороны поля (От 5 до 18)</label>
                             <br />
                             <Input
                                 id="size"
@@ -113,7 +148,9 @@ function AdminPage() {
                                 onChange={handleInput}
                             />
                         </div>
+                        {error.size && <FormError>{error.size}</FormError>}
                         <br />
+                        {error.details && <FormError>{error.details}</FormError>}
                         <Button $color="black" type="submit">Создать</Button>
                     </FieldWrapper>
                 </StyledForm>

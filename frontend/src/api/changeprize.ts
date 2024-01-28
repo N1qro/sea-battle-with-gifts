@@ -4,7 +4,11 @@ import api from "./api";
 
 export default async function change_prize(prize_id: number, data) {
     try {
-        const response = await api.put(`game/prize/${prize_id}/`, data)
+        const response = await api.put(`game/prize/${prize_id}/`, data, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        })
         return {
             "status": "success",
             "content": response.data

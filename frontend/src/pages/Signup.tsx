@@ -3,12 +3,13 @@ import StyledForm, { OneRow, FieldWrapper, FormError } from '../styles/StyledFor
 import Button from '../components/Button'
 import { Header3 } from '../styles/TextStyles'
 import FormLogo from "../assets/img/form-control.png"
-import Input from '../styles/InputElement'
+import Input, { RedirectLink } from '../styles/InputElement'
 import { SubText } from '../styles/TextStyles'
 import { RegisterFields, RegisterErrors } from '../types/loginForm'
 import useAuth from '../hooks/useAuth'
 import register from '../api/register'
 import get_user_data from '../api/userdata'
+import { ValidateEmail } from '../utils'
 
 
 function Signup() {
@@ -21,12 +22,34 @@ function Signup() {
         password2: "",
     })
 
+    function validator() {
+        if (userData.email === "") {
+            setError({email: "Это поле не может быть пустым"})
+        } else if (userData.username === "") {
+            setError({username: "Это поле не может быть пустым"})
+        }  else if (userData.password === "") {
+            setError({password: "Это поле не может быть пустым"})
+        } else if (userData.password2 === "") {
+            setError({password2: "Это поле не может быть пустым"})
+        } else if (!ValidateEmail(userData.email)) {
+            setError({email: "Формат почты не верен"})
+        } else if (userData.password !== userData.password2) {
+            setError({password2: "Пароли не совпадают"})
+        } else {
+            setError({})
+            return true
+        }
+
+        return false
+    }
+
     function handleInput(e: ChangeEvent<HTMLInputElement>) {
         setUserData(prev => ({...prev, [e.target.id]: e.target.value}))
     }
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault()
+        if (!validator()) { return }
 
         async function makeRequest() {
             const registerData = await register(userData)
@@ -104,11 +127,11 @@ function Signup() {
                     {error.password2 && <FormError>{error.password2}</FormError>}
                 </div>
                 <Button $color="black" type="submit">Создать аккаунт</Button>
-                <SubText>Регистрируясь, вы принимаете условия пользования*</SubText>
+                <SubText>Регистрируясь, вы принимаете <RedirectLink to="../policy">условия пользования*</RedirectLink></SubText>
             </FieldWrapper>
 
             <nav>
-                <p>Есть аккаунт? Войти</p>
+                <p>Есть аккаунт? <RedirectLink to="../login" relative="route">Войти</RedirectLink></p>
             </nav>
         </StyledForm>
     )

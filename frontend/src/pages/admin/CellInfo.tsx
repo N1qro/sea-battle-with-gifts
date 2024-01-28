@@ -16,14 +16,26 @@ function CellInfo() {
     const { selectedCell, gameData, refetchData } = useOutletContext<OutletContextType>()
     const [ cellObject, setCellObject ] = useState<CellObject | null>()
     const [ error, setError ] = useState("")
-    const [ formData, setFormData ] = useState({
+    const [ formData, setFormData ] = useState<{
+        text: string,
+        title: string,
+        activation_code: string,
+        image: File | null,
+    }>({
         text: "",
         title: "",
         activation_code: "",
+        image: null,
     })
 
 	function handleTextInput(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setFormData(prev => ({...prev, [e.target.id]: e.target.value}))
+    }
+
+    function handleFileInput(e: ChangeEvent<HTMLInputElement>) {
+        if (e.target.files && e.target.files.length > 0) {
+            setFormData(prev => ({...prev, "image": e.target.files![0]}))
+        }
     }
 
     function changePrize(e) {
@@ -63,6 +75,7 @@ function CellInfo() {
         e.preventDefault()
     }
 
+    console.log(formData)
     useEffect(() => {
         const cell = gameData.cells?.filter(val => val.position === selectedCell)[0]
         setCellObject(cell || null)
@@ -71,6 +84,7 @@ function CellInfo() {
             text: cell?.ship.prize?.text || "",
             title: cell?.ship.prize?.title || "",
             activation_code: cell?.ship.prize?.activation_code || "",
+            image: cell?.ship.prize?.image || null,
         })
     }, [gameData, selectedCell])
 
@@ -109,13 +123,14 @@ function CellInfo() {
                         <FormError>{error.activation_code}</FormError>
                         <FormError>{error.details}</FormError>
                     </div>
-                    {/* <div>
+                    <div>
                         <label htmlFor="">Изображение</label>
                         <br />
                         <Input
                             type="file"
+                            onChange={handleFileInput}
                         ></Input>
-                    </div> */}
+                    </div>
                     {!cellObject && <Button
                         $color="green"
                         onClick={addPrize}

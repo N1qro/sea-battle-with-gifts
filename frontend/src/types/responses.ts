@@ -9,6 +9,7 @@ export interface CellObject {
             id: number,
             game: number,
             activation_code: string,
+            image: string | null,
             text: string,
             title: string,
             winner: null

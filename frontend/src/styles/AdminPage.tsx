@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Header4, Header5, NavText, RegularText, SubText } from "./TextStyles";
 import Button from "../components/Button";
 import StyledForm from "./StyledForm";
+import { FlexRow } from "./GlobalStyles";
 
 interface IndicatorProps {
     $color?: string;
@@ -50,7 +51,7 @@ export const GameContainer = styled.nav`
     max-height: 300px;
 `
 
-export const Game = styled.div`
+export const Game = styled.div<{$isActive: boolean}>`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -58,8 +59,13 @@ export const Game = styled.div`
     padding: 10px 9px;
 
     border-radius: 10px;
-    background: #5B85E9;
+    background: ${props => props.$isActive ? "gray" : "#5B85E9"};
     box-shadow: 0px 1px 6.3px 0px rgba(0, 0, 0, 0.25);
+
+    ${FlexRow} {
+        gap: 1rem;
+        padding-right: 0.5rem;
+    }
 `
 
 export const BoardCreation = styled(FlexColumn)`

@@ -10,7 +10,10 @@ export default async function update_player_shots(user_id: number, game: string,
             game: game,
         }
         const response = await api.put(`game/players/${user_id}/`, data)
-        return response.data
+        return {
+            "status": "success",
+            "content": response.data,
+        }
     } catch (err) {
         if (err instanceof AxiosError && err.response) {
             return {
@@ -18,5 +21,9 @@ export default async function update_player_shots(user_id: number, game: string,
                 "content": err.response.data,
             }
         }
+    }
+    return {
+        "status": "error",
+        "content": {details: "Что-то пошло не так"}
     }
 }

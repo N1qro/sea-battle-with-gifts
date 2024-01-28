@@ -5,7 +5,7 @@ import {
   Route
 } from 'react-router-dom'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { User } from './types/general'
 import { AxiosSettings } from './api/api'
 
@@ -22,9 +22,11 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import ProfileIndex from './pages/profile/Index'
 import AdminPage from './pages/admin/Index'
-import About from './pages/About'
 import Game from './pages/admin/Game'
 import Feedback from './pages/Feedback'
+import GameInvitations from './pages/profile/Invitations'
+import GameHistory from './pages/profile/History'
+import PlayerGame from './pages/Game'
 
 import CellInfo from './pages/admin/CellInfo'
 import GameInfo from './pages/admin/GameInfo'
@@ -36,9 +38,9 @@ import { AuthContext } from './context/AuthContext'
 
 
 const router = createBrowserRouter(createRoutesFromElements(
-	<Route element={<RootLayout/>}>
-		<Route index element={<Home/>} />
-		<Route path="about" element={<About />}/>
+	<Route element={<RootLayout />}>
+		<Route index element={<Home />} />
+		<Route path="policy" />
 
 		<Route element={<AnonymousOnly />}>
 			<Route path="register" element={<Signup />} />
@@ -46,21 +48,22 @@ const router = createBrowserRouter(createRoutesFromElements(
 		</Route>
 
 		<Route element={<RequireUser />}>
-			<Route path="feedback" element={<Feedback />}/>
+			<Route path="game/:hash" element={<PlayerGame />} />
+			<Route path="feedback" element={<Feedback />} />
 			<Route path="profile" element={<ProfileLayout />} >
-				<Route index element={<ProfileIndex/>} />
-				<Route path="history" />
-				<Route path="invitations" />
+				<Route index element={<ProfileIndex />} />
+				<Route path="history" element={<GameHistory />} />
+				<Route path="invitations" element={<GameInvitations />} />
 			</Route>
 		</Route>
 
 		<Route path="admin" element={<RequireAdmin />}>
 			<Route index element={<AdminPage />} />
 			<Route path="game/:hash" element={<Game />}>
-				<Route index element={<GameInfo />}/>
+				<Route index element={<GameInfo />} />
 				<Route path="players" element={<PlayerInfo />} />
-				<Route path="ships" element={<CellInfo />}/>
-				<Route path="log" element={<GameLog />}/>
+				<Route path="ships" element={<CellInfo />} />
+				<Route path="log" element={<GameLog />} />
 			</Route>
 		</Route>
 	</Route>

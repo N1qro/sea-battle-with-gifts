@@ -50,7 +50,7 @@ export function AxiosSettings({children} : {children: JSX.Element }) {
 
         setSetupDone(true)
         return () => api.interceptors.response.eject(JWTUpdater)
-    }, [])
+    }, [user])
 
     return setupDone ? children : null;
 }

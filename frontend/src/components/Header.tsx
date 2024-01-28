@@ -15,7 +15,7 @@ function Header() {
 				<img src={SiteLogo} alt="site-brand" />
 			</Link>
 			<nav>
-				<NavLink to="about">О проекте</NavLink>
+				<NavLink to="/">О проекте</NavLink>
 				{isLoggedIn && !user.is_superuser && <NavLink to="profile">Профиль</NavLink>}
 				{isLoggedIn && user.is_superuser && <NavLink to="admin">Администрирование</NavLink>}
 			</nav>

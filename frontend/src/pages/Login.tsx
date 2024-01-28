@@ -4,7 +4,7 @@ import { Header3 } from '../styles/TextStyles'
 
 import { LoginFields, LoginErrors } from '../types/loginForm'
 
-import Input from '../styles/InputElement'
+import Input, { RedirectLink } from '../styles/InputElement'
 import FormLogo from "../assets/img/form-control.png"
 import Button from '../components/Button'
 import useAuth from '../hooks/useAuth'
@@ -20,11 +20,26 @@ function Login() {
 		password: "",
 	})
 
+	function validate() {
+		if (userData.username === "") {
+			setError({username: "Это поле не может быть пустым"})
+		} else if (userData.password === "") {
+			setError({password: "Это поле не может быть пустым"})
+		} else {
+			setError({})
+			return true
+		}
+		return false
+	}
+
 	function handleInput(e: ChangeEvent<HTMLInputElement>) {
         setUserData(prev => ({...prev, [e.target.id]: e.target.value}))
     }
 
 	function handleSubmit(e: FormEvent<HTMLFormElement>) {
+		e.preventDefault()
+		if (!validate()) { return }
+
 		async function makeRequest() {
 			const data = await RequestLogin(userData)
 
@@ -44,7 +59,6 @@ function Login() {
 		}
 
 		makeRequest()
-		e.preventDefault()
 	}
 
 	return (
@@ -81,8 +95,8 @@ function Login() {
 			</FieldWrapper>
 
 			<nav>
-				<p>Не помните пароль? Восстановить</p>
-				<p>Нет аккаунта? Зарегистрироваться</p>
+				<p>Не помните пароль? <RedirectLink to=".">Восстановить</RedirectLink></p>
+				<p>Нет аккаунта? <RedirectLink to="../register">Зарегистрироваться</RedirectLink></p>
 			</nav>
 		</StyledForm>
 	)

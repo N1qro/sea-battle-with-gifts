@@ -17,7 +17,7 @@ interface UserData {
 
 
 function ProfileLayout() {
-    const { user } = useAuth()
+    const { user, logout } = useAuth()
     const [ data, setData ] = useState()
 
     useEffect(() => {
@@ -29,7 +29,7 @@ function ProfileLayout() {
         })
     }, [])
 
-    if (!data) {
+    if (!user || !data) {
         return <p>Loading</p>
     }
 
@@ -38,8 +38,9 @@ function ProfileLayout() {
             <div>
                 <CredentialContainer>
                     <img src={UserAvatar} alt="profile-picture" />
-                    <Header4>{user!.username}</Header4>
-                    <SubText>({user!.email})</SubText>
+                    <Header4>{user.username}</Header4>
+                    <SubText>({user.email})</SubText>
+                    <SubText>UID: {user.id}</SubText>
                 </CredentialContainer>
                 <div>
                     <NavText>Сделано выстрелов: {data.shot_count}</NavText>
@@ -51,7 +52,7 @@ function ProfileLayout() {
                     <NavLink to="invitations">Приглашения на игру</NavLink>
                     <NavLink to="history">История игр</NavLink>
                 </nav>
-                <Button $color="red">Выйти</Button>
+                <Button onClick={logout} $color="red">Выйти</Button>
             </div>
             <Outlet />
         </ProfileBackground>

@@ -4,7 +4,11 @@ import api from "./api";
 
 export default async function create_prize(data) {
     try {
-        const response = await api.post(`game/prize/`, data)
+        const response = await api.post(`game/prize/`, data, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        })
         return {
             "status": "success",
             "content": response.data,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import api from "../../api/api"
 import UserPrizeCard from "../../components/UserPrizeCard"
-import { Header4, SubText } from "../../styles/TextStyles"
+import { Header4, Header5, RegularText, SubText } from "../../styles/TextStyles"
 import { GiftGrid, GiftSection } from "../../styles/Profile"
 
 
@@ -9,6 +9,7 @@ export interface PrizeInfo {
     id: number,
     title: string,
     text: string,
+    image: string | null,
     activation_code: string,
 } 
 
@@ -36,9 +37,12 @@ function Index() {
             <Header4>Доступные призы</Header4>
             <SubText>Чтобы узнать код активации, нажмите на карточку</SubText>
 
-            <GiftGrid>
-                {data.map(el => <UserPrizeCard {...el} key={el.id} />)}
-            </GiftGrid>
+            {data.length > 0 ?
+                <GiftGrid>
+                    {data.map(el => <UserPrizeCard {...el} key={el.id} />)}
+                </GiftGrid> :
+                <Header5>Вы ещё не получили ни одного подарка</Header5>
+            }
         </GiftSection>
     )
 }

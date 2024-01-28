@@ -1,4 +1,4 @@
-import { useOutletContext } from "react-router-dom"
+import { Form, useOutletContext } from "react-router-dom"
 import { OutletContextType } from "./Game"
 import { ChangeEvent } from "react"
 
@@ -14,7 +14,7 @@ import update_player_shots from "../../api/updateplayershots"
 
 
 function PlayerInfo() {
-    const [ error, setError ] = useState("")
+    const [ error, setError ] = useState({})
 	const { gameData, refetchData } = useOutletContext<OutletContextType>()
     const [ formData, setFormData ] = useState({
         "user": 0,
@@ -24,9 +24,11 @@ function PlayerInfo() {
     function updatePlayer(e) {
         (async () => {
             const data = await update_player_shots(formData.user, gameData.link, formData.count)
-            console.log("Updated?")
-            console.log(data)
-            refetchData()
+            if (data.status === "error") {
+                setError(data.content)
+            } else {
+                refetchData()
+            }
         })()
         e.preventDefault()
     }
@@ -34,16 +36,22 @@ function PlayerInfo() {
     function deletePlayer(e, user_id: number) {
         (async () => {
             const data = await remove_player(user_id, gameData.link)
-            console.log(data)
-            refetchData()
+            if (data.status === "error") {
+                setError(data.content)
+            } else {
+                refetchData()
+            }
         })()
     }
 
     function addPlayer(e) {
         (async () => {
             const data = await add_player({...formData, game: gameData.link})
-            console.log(data)
-            refetchData()
+            if (data.status === "error") {
+                setError(data.content)
+            } else {
+                refetchData()
+            }
         })()
         e.preventDefault()
     }
@@ -71,24 +79,24 @@ function PlayerInfo() {
         const maxCount = gameData.size * gameData.size
 
         if (formData.count === 0) {
-            setError("Количество выстрелов не может быть равно нулю")
+            setError({count: "Количество выстрелов не может быть равно нулю"})
             return false
         } else if (formData.count > maxCount) {
-            setError(`Максимальное кол-во выстрелов: ${maxCount}`)
+            setError({count: `Максимальное кол-во выстрелов: ${maxCount}`})
             return false
         } else if (formData.user === 0) {
-            setError("Пользователя с id=0 не существует")
+            setError({user: "Пользователя с id=0 не существует"})
             return false
         }
 
         const totalCount = gameData.players?.map(player => player.count).reduce((a, b) => a + b)
         
         if (totalCount && totalCount - hadPreviously + formData.count > maxCount) {
-            setError("Суммарное кол-во выстрелов не может превышать размеры поля")
+            setError({count: "Суммарное кол-во выстрелов не может превышать размеры поля"})
             return false
         }
 
-        setError("")
+        setError({})
         return true
     }
 
@@ -103,10 +111,8 @@ function PlayerInfo() {
         if (!validate(matchingPlayer?.count || 0)) { return }
 
         if (!!matchingPlayer) {
-            console.log("updating!!!")
             updatePlayer(e)
         } else {
-            console.log("adding!!!")
             addPlayer(e)
         }
     }
@@ -130,6 +136,7 @@ function PlayerInfo() {
                             value={formData.user}
                         ></Input>
                     </div>
+                    {error.user && <FormError>{error.user}</FormError>}
                     <div>
                         <label htmlFor="">Количество выстрелов</label>
                         <br />
@@ -139,7 +146,8 @@ function PlayerInfo() {
                             value={formData.count}
                         ></Input>
                     </div>
-                    <FormError>{error}</FormError>
+                    {error.count && <FormError>{error.count}</FormError>}
+                    {error.details && <FormError>{error.details}</FormError>}
                     <Button $color="black">Добавить</Button>
                 </FieldWrapper>
             </StyledForm>

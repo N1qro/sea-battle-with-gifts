@@ -1,5 +1,7 @@
 import { styled } from "styled-components";
-import { NavText } from "./TextStyles";
+import { Header5, NavText } from "./TextStyles";
+import { PlayerCard } from "./GamePage";
+import { FlexRow } from "./GlobalStyles";
 
 export const ProfileBackground = styled.div`
     display: grid;
@@ -106,10 +108,46 @@ export const GiftSection = styled.section`
         margin-top: 1rem;
         width: 100%;
     }
+
+    ${Header5} {
+        margin-top: 1rem;
+    }
 `
 
 export const CredentialContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+`
+
+
+export const InvitationPage = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 2.5rem;
+`
+
+export const InvitationsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    height: 400px;
+    overflow-y: auto;
+    width: 85%;
+    margin-top: 1rem;
+`
+
+export const Invitation = styled(PlayerCard)`
+    justify-content: start;
+    color: white;
+
+    :nth-child(2) {
+        margin-left: auto;
+    }
+
+    ${FlexRow} {
+        gap: 0.5rem;
+    }
 `

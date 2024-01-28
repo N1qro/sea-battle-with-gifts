@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Button from "../components/Button";
 import Input, { TextArea } from "./InputElement";
+import { SubText } from "./TextStyles";
 
 const StyledForm = styled.form`
     color: black;
@@ -37,6 +38,10 @@ export const FormError = styled.p`
 
 export const FieldWrapper = styled.div`
     width: 284px;
+
+    ${SubText}:last-of-type {
+        text-align: center;
+    }
 `
 
 export const OneRow = styled(FieldWrapper)`
@@ -46,6 +51,13 @@ export const OneRow = styled(FieldWrapper)`
     flex-wrap: nowrap;
     gap: 1rem;
 
+`
+
+export const FeedBackForm = styled(StyledForm)`
+    ${Button} {
+        display: block;
+        text-align: center;
+    }
 `
 
 export default StyledForm

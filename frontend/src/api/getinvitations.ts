@@ -2,9 +2,9 @@ import { AxiosError } from "axios";
 import api from "./api";
 
 
-export default async function remove_player(user_id: number, game: string) {
+export default async function get_invites() {
     try {
-        const response = await api.delete(`game/players/${user_id}/`, { data: { game } })
+        const response = await api.get(`user/invites/`)
         return {
             "status": "success",
             "content": response.data,
@@ -18,7 +18,7 @@ export default async function remove_player(user_id: number, game: string) {
         }
     }
     return {
-        "status": "error",
-        "content": {details: "Что-то пошло не так"}
+        "status": "success",
+        "content": {"details": "Что-то пошло не так"}
     }
 }
