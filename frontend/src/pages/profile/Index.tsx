@@ -9,6 +9,7 @@ export interface PrizeInfo {
     id: number,
     title: string,
     text: string,
+    winner: null | number,
     image: string | null,
     activation_code: string,
 } 

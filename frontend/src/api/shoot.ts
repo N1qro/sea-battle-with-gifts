@@ -1,11 +1,10 @@
 import { AxiosError } from "axios";
 import api from "./api";
-import { GameData } from "../types/responses";
 
-export default async function get_initial_data(hash: string) {
+
+export default async function request_shoot(data) {
     try {
-        const response = await api.get<GameData>(`/game/${hash}`)
-        console.log(response.headers)
+        const response = await api.post(`game/shoot/`, data)
         return {
             "status": "success",
             "content": response.data,
@@ -17,9 +16,9 @@ export default async function get_initial_data(hash: string) {
                 "content": err.response.data,
             }
         }
-        return {
-            "status": "error",
-            "content": err,
-        }
+    }
+    return {
+        "status": "error",
+        "content": {"details": "Что-то пошло не так"}
     }
 }

@@ -1,7 +1,7 @@
 export interface CellObject {
     id: number,
     position: string,
-    status: 1 | 2 | 3 | 4,
+    status: 0 | 1 | 2 | 3,
     ship: {
         id: number,
         is_alive: boolean,

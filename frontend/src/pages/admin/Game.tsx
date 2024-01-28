@@ -12,7 +12,7 @@ import {
 import Board from "../../components/Board"
 import { NavLink } from "react-router-dom"
 
-import { CellObject } from "../../types/responses"
+import { fetchGameData } from "../../utils"
 // Icons
 import info_filled from "../../assets/svg/info_filled.svg"
 import players_filled from "../../assets/svg/users_filled.svg"
@@ -30,36 +30,6 @@ export interface OutletContextType {
     gameData: GameData,
 }
 
-function getCellBackground(cell: CellObject): "miss" | "cross" | "ship" | null {
-    switch (cell.status) {
-        case 1:
-            return "miss"
-        case 2:
-            return "ship"
-        case 3:
-            return "cross"
-        default:
-            return null
-    }
-}
-
-
-async function fetchGameData(hash: string, setFunction: Dispatch<SetStateAction<GameData | null>>) {
-    const data = await get_initial_data(hash)
-
-    if (data.status === "success") {
-        if (data.content.cells) {
-            const newCells = data.content?.cells.map(el => (
-                {...el, background: getCellBackground(el)}
-            ))
-            setFunction({...data.content, cells: newCells})
-        } else {
-            setFunction(data.content)
-        }
-    } else {
-        throw new Error(data.content)
-    }
-}
 
 function Game() {
     const parameters = useParams()

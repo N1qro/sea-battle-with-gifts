@@ -75,7 +75,6 @@ function CellInfo() {
         e.preventDefault()
     }
 
-    console.log(formData)
     useEffect(() => {
         const cell = gameData.cells?.filter(val => val.position === selectedCell)[0]
         setCellObject(cell || null)

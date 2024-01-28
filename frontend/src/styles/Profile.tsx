@@ -1,7 +1,9 @@
 import { styled } from "styled-components";
-import { Header5, NavText } from "./TextStyles";
+import { Header5, NavText, RegularText } from "./TextStyles";
 import { PlayerCard } from "./GamePage";
 import { FlexRow } from "./GlobalStyles";
+import Button from "../components/Button";
+import Input from "./InputElement";
 
 export const ProfileBackground = styled.div`
     display: grid;
@@ -79,6 +81,16 @@ export const AbsoluteWindow = styled.div`
     position: fixed;
 `
 
+export const PrizeAward = styled(AbsoluteWindow)`
+    animation: 1s ease-in-out 0s 1 normal none running changeColor;
+    animation-fill-mode: forwards;
+    @keyframes changeColor {
+        0% {background-color: transparent;}
+        100% {background-color: #287dc8af;}
+    }
+`
+
+
 export const ActivationCodePopup = styled.div`
     display: flex;
     flex-direction: column;
@@ -90,7 +102,16 @@ export const ActivationCodePopup = styled.div`
     background-color: #2172e3c3;
     
     img {
-        max-width: 700px;
+        max-height: 300px;
+        margin-bottom: 1rem;
+    }
+    
+    ${RegularText}:first-of-type {
+        margin-bottom: 1rem;
+    } 
+
+    ${Input} {
+        margin-bottom: 1rem;
     }
 `
 
@@ -98,7 +119,7 @@ export const GiftGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 
-    max-height: 500px;
+    max-height: 450px;
     overflow-y: auto;
     grid-auto-rows: 160px;
     grid-auto-flow: row;
@@ -154,5 +175,23 @@ export const Invitation = styled(PlayerCard)`
 
     ${FlexRow} {
         gap: 0.5rem;
+    }
+`
+
+export const PrizeAwardWindow = styled(ActivationCodePopup)`
+    color: white;
+    text-shadow: 1px 1px 2rem rgba(0, 0, 0, 0.5);
+    border: 5px solid white;
+
+    img {
+        max-height: 400px;
+    }
+
+    ${FlexRow} {
+        gap: 1rem;
+    }
+
+    ${Button} {
+        margin-top: 3rem;
     }
 `
