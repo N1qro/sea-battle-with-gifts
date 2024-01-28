@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 import hashids
 
@@ -22,12 +22,13 @@ class Game(models.Model):
 
     status = models.IntegerField(
         choices=(
+            (0, "Не опубликована"),
             (1, "Не начата"),
             (2, "Начата"),
             (3, "Окончена"),
         ),
         verbose_name="статус",
-        default=1,
+        default=0,
     )
 
     users = models.ManyToManyField(
@@ -64,19 +65,21 @@ def update_link(sender, instance, **kwargs):
 
 
 class Cell(models.Model):
-    y = models.PositiveSmallIntegerField()
-
-    x = models.PositiveSmallIntegerField()
+    position = models.CharField(
+        verbose_name="позиция",
+        max_length=25,
+        unique=True,
+    )
 
     status = models.IntegerField(
         choices=(
-            (1, "Пустая"),
-            (2, "Уничтоженная"),
-            (3, "Стоит корабль"),
-            (4, "Стоит уничтоженный корабль"),
+            (0, "Пустая"),
+            (1, "Уничтоженная"),
+            (2, "Стоит корабль"),
+            (3, "Стоит уничтоженный корабль"),
         ),
         verbose_name="статус",
-        default=1,
+        default=0,
     )
 
     shot_by = models.ForeignKey(
@@ -100,10 +103,13 @@ class Cell(models.Model):
         verbose_name_plural = "Клетки"
 
     def __str__(self):
-        return self.game.title
+        return f"{self.game.title} - {self.position}"
 
 
 class Prize(models.Model):
+    def prize_imgae_upload_to(self, filename):
+        return f"prize/{self.id}/{filename}"
+
     title = models.CharField(
         verbose_name="название",
         max_length=150,
@@ -111,6 +117,13 @@ class Prize(models.Model):
 
     text = models.TextField(
         verbose_name="описание",
+    )
+
+    image = models.ImageField(
+        upload_to=prize_imgae_upload_to,
+        verbose_name="изображение приза",
+        null=True,
+        blank=True,
     )
 
     winner = models.ForeignKey(
@@ -132,8 +145,6 @@ class Prize(models.Model):
     activation_code = models.CharField(
         verbose_name="код активации",
         max_length=150,
-        null=True,
-        blank=True,
     )
 
     class Meta:
@@ -150,14 +161,14 @@ class Ship(models.Model):
         default=True,
     )
 
-    cell = models.ForeignKey(
+    cell = models.OneToOneField(
         Cell,
         on_delete=models.CASCADE,
         verbose_name="клетка",
         related_name="ship",
     )
 
-    prize = models.ForeignKey(
+    prize = models.OneToOneField(
         Prize,
         on_delete=models.CASCADE,
         verbose_name="приз",
@@ -175,8 +186,18 @@ class Ship(models.Model):
         verbose_name = "Корбаль"
         verbose_name_plural = "Корабли"
 
+    def delete(self, *args, **kwargs):
+        self.cell.delete()
+        return super(self.__class__, self).delete(*args, **kwargs)
+
     def __str__(self):
-        return self.game.title
+        return f"{self.game.title} - {self.cell.position}"
+
+
+@receiver(post_delete, sender=Ship)
+def post_delete_user(sender, instance, *args, **kwargs):
+    if instance.cell:
+        instance.cell.delete()
 
 
 class UserShots(models.Model):
@@ -192,8 +213,6 @@ class UserShots(models.Model):
         on_delete=models.CASCADE,
         verbose_name="пользователь",
         related_name="user_shots",
-        blank=True,
-        null=True,
     )
 
     count = models.IntegerField(
@@ -202,7 +221,8 @@ class UserShots(models.Model):
     )
 
     class Meta:
+        unique_together = ["user", "game"]
         verbose_name_plural = "Выстрелы пользователей"
 
     def __str__(self):
-        return self.game.title
+        return f"{self.game.title} - {self.user.username}"

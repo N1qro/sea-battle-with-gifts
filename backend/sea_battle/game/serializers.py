@@ -6,15 +6,32 @@ from users.models import User
 
 
 class GameSerializer(serializers.ModelSerializer):
+    link = serializers.ReadOnlyField()
+
     class Meta:
         model = models.Game
-        fields = ["id", "title", "size", "text", "link"]
+        fields = ["id", "title", "status", "size", "text", "link"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if self.context.get("cells"):
+            representation["cells"] = self.context["cells"]
+
+        if self.context.get("players"):
+            representation["players"] = self.context["players"]
+
+        if self.context.get("count"):
+            representation["count"] = self.context["count"]
+
+        return representation
 
 
 class UserShots(serializers.ModelSerializer):
-    game = serializers.PrimaryKeyRelatedField(
+    game = serializers.SlugRelatedField(
+        slug_field="link",
         queryset=models.Game.objects.all(),
     )
+
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
     )
@@ -25,29 +42,57 @@ class UserShots(serializers.ModelSerializer):
 
 
 class PrizeSerializer(serializers.ModelSerializer):
-    game = serializers.PrimaryKeyRelatedField(
+    game = serializers.SlugRelatedField(
+        slug_field="link",
         queryset=models.Game.objects.all(),
     )
 
     class Meta:
         model = models.Prize
-        fields = ["id", "title", "text", "game", "winner", "activation_code"]
+        fields = [
+            "id",
+            "title",
+            "text",
+            "image",
+            "game",
+            "winner",
+            "activation_code",
+        ]
 
 
 class CellSerializer(serializers.ModelSerializer):
-    game = serializers.PrimaryKeyRelatedField(
+    game = serializers.SlugRelatedField(
+        slug_field="link",
         queryset=models.Game.objects.all(),
     )
 
     class Meta:
         model = models.Cell
-        fields = ["id", "y", "x", "status", "game"]
+        fields = ["id", "position", "status", "game"]
+
+
+class CellWithShipSerializer(serializers.ModelSerializer):
+    ship = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Cell
+        fields = ["id", "position", "status", "ship"]
+
+    def get_ship(self, obj):
+        try:
+            ship = models.Ship.objects.get(cell=obj)
+            return ShipWithPrizeSerializer(instance=ship).data
+
+        except models.Ship.DoesNotExist:
+            return {}
 
 
 class ShipSerializer(serializers.ModelSerializer):
-    game = serializers.PrimaryKeyRelatedField(
+    game = serializers.SlugRelatedField(
+        slug_field="link",
         queryset=models.Game.objects.all(),
     )
+
     prize = serializers.PrimaryKeyRelatedField(
         queryset=models.Prize.objects.all(),
     )
@@ -59,8 +104,16 @@ class ShipSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         cell = models.Cell.objects.create(
-            status=3,
+            status=2,
             **validated_data.pop("cell"),
         )
 
         return models.Ship.objects.create(cell=cell, **validated_data)
+
+
+class ShipWithPrizeSerializer(serializers.ModelSerializer):
+    prize = PrizeSerializer()
+
+    class Meta:
+        model = models.Ship
+        fields = ["id", "is_alive", "prize"]

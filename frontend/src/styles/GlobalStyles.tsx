@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import BackgroundPattern from "../assets/bg-pattern.svg"
 
 
@@ -29,6 +29,10 @@ const GlobalStyles = createGlobalStyle`
         color: inherit;
     }
 
+    a.active {
+        font-weight: bold;
+    }
+
     #root {
         min-height: 100vh;
         display: flex;
@@ -39,5 +43,13 @@ const GlobalStyles = createGlobalStyle`
         gap: 1rem;
     }
 `
+
+export const FlexRow = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+`
+
 
 export default GlobalStyles

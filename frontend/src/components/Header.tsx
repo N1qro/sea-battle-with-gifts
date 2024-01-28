@@ -1,12 +1,13 @@
 import Button from "./Button"
 import SiteLogo from "../assets/site-logo.svg"
 import StyledHeader from "../styles/Header"
-import { Link } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 
 
 function Header() {
 	const { user, logout } = useAuth()
+	const isLoggedIn = !!user
 
 	return (
 		<StyledHeader>
@@ -14,7 +15,9 @@ function Header() {
 				<img src={SiteLogo} alt="site-brand" />
 			</Link>
 			<nav>
-				<Link to="about">О проекте</Link>
+				<NavLink to="/">О проекте</NavLink>
+				{isLoggedIn && !user.is_superuser && <NavLink to="profile">Профиль</NavLink>}
+				{isLoggedIn && user.is_superuser && <NavLink to="admin">Администрирование</NavLink>}
 			</nav>
 			{!user ?
 				<nav>

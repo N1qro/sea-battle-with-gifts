@@ -21,5 +21,5 @@ export type RegisterErrors = {
     email?: string,
     password?: string,
     password2?: string,
-    detail?: string,
+    details?: string,
 }

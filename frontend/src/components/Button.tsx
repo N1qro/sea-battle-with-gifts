@@ -22,6 +22,11 @@ const Button = styled.button<ButtonProps>`
 	font-style: normal;
 	font-weight: 400;
 	line-height: normal;
+	cursor: pointer;
+
+	&:disabled {
+		cursor: default;
+	}
 
 	background-color: ${
 		props => props.$state !== "empty" ?

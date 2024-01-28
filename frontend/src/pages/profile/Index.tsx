@@ -1,54 +1,50 @@
-import { useLoaderData } from "react-router-dom"
+import { useEffect, useState } from "react"
+import api from "../../api/api"
+import UserPrizeCard from "../../components/UserPrizeCard"
+import { Header4, Header5, RegularText, SubText } from "../../styles/TextStyles"
+import { GiftGrid, GiftSection } from "../../styles/Profile"
 
-interface PrizeInfo {
+
+export interface PrizeInfo {
     id: number,
     title: string,
-    description: string,
-    content: string,
+    text: string,
+    winner: null | number,
+    image: string | null,
+    activation_code: string,
 } 
-
-export async function loader() {
-    return new Promise<PrizeInfo[]>((resolve) => {
-        setTimeout(() => {
-            resolve([
-                {
-                    "id": 1,
-                    "title": "1000 GP | PUBG",
-                    "description": "Игровая валюта для Steam игры PUBG",
-                    "content": "SUPER-SECRET-GCOIN-ACODE",
-                },
-                {
-                    "id": 2,
-                    "title": "12000 GP | PUBG",
-                    "description": "Игровая валюта для Steam игры PUBG",
-                    "content": "SUPER-SECRET-GCOIN-ACODE",
-                },
-                {
-                    "id": 3,
-                    "title": "13500 VB | Fortnite",
-                    "description": "Игровая валюта для игры Fortnite",
-                    "content": "SUPER-SECRET-VCOIN-ACODE",
-                },
-                {
-                    "id": 4,
-                    "title": "5175 VP | VALORANT",
-                    "description": "Игровая валюта для игры Valorant",
-                    "content": "SUPER-SECRET-VCOIN-ACODE",
-                }
-            ])
-        }, 50) // аля задержка
-    })
-}
 
 
 function Index() {
-    const data = useLoaderData() as PrizeInfo[]
+    const [data, setData] = useState<PrizeInfo[]>()
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const prizes = await api.get("user/prizes/")
+                setData(prizes.data)
+            } catch (err) {
+                console.warn(err)
+            }
+        })()
+    }, [])
+
+    if (!data) {
+        return <p>Loading</p>
+    }
 
     return (
-        <div>
-            <p>Призы:</p>
-            {data.map(el => <p key={el.id}>{el.title}</p>)}
-        </div>
+        <GiftSection>
+            <Header4>Доступные призы</Header4>
+            <SubText>Чтобы узнать код активации, нажмите на карточку</SubText>
+
+            {data.length > 0 ?
+                <GiftGrid>
+                    {data.map(el => <UserPrizeCard {...el} key={el.id} />)}
+                </GiftGrid> :
+                <Header5>Вы ещё не получили ни одного подарка</Header5>
+            }
+        </GiftSection>
     )
 }
 

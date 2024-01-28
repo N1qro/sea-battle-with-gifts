@@ -1,9 +1,16 @@
 from django.db.models import Sum
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer as SimpleTokenObtainPairSerializer,
+)
 
 
-from game.models import Game, Prize, UserShots
+from game.models import Prize, UserShots
 from users import models
+
+
+class TokenObtainPairSerializer(SimpleTokenObtainPairSerializer):
+    default_error_messages = {"no_active_account": "Неверный логин или пароль"}
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -18,18 +25,33 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
-        fields = ["id", "username", "email"]
+        fields = ["id", "username", "email", "is_superuser"]
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        games = Game.objects.filter(users=instance).count()
+        prizes = Prize.objects.filter(winner=instance).count()
         shots = UserShots.objects.filter(user=instance).aggregate(
-            shot_count=Sum("count"),
-        )["shot_count"]
+            count=Sum("count"),
+        )["count"]
 
-        representation["game_count"] = games
-        representation["shot_count"] = shots
+        representation["prize_count"] = prizes
+        representation["count"] = shots if shots else 0
+
+        return representation
+
+
+class PlayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.User
+        fields = ["id", "username"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        shots = UserShots.objects.get(user=instance, game=self.context["game"])
+
+        representation["count"] = shots.count
 
         return representation
 

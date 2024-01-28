@@ -1,14 +1,19 @@
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const api = axios.create({
     baseURL: 'http://127.0.0.1:8000/api/'
 })
 
+async function refreshToken(refreshToken: string) {
+    const response = await api.post('user/auth/refresh/', { refresh: refreshToken });
+    return response.data;
+}
+
 export function AxiosSettings({children} : {children: JSX.Element }) {
-    // Использую его как отдельный компонент, так как нужно вызывать хуки внутри интерсептора
-    const { user } = useAuth()
+    const { user, login } = useAuth()
+    const [ setupDone, setSetupDone ] = useState(false)
 
     useEffect(() => {
         if (user) {
@@ -18,7 +23,36 @@ export function AxiosSettings({children} : {children: JSX.Element }) {
         }
     }, [user])
 
-    return children;
+    useEffect(() => {
+        const JWTUpdater = api.interceptors.response.use(
+            response => response,
+            async (error) => {
+                const originalRequest = error.config
+
+                if (error.response && (error.response.status === 401 || error.response.status === 403) && user && !originalRequest._retry) {
+                    originalRequest._retry = true
+                    const data = await refreshToken(user.refreshToken)
+                    
+                    login({
+                        ...user,
+                        "accessToken": data.access,
+                        "refreshToken": data.refresh,
+                    })
+                    
+                    originalRequest.headers["Authorization"] = `Bearer ${data.access}`
+                    console.log("retrying request")
+                    return api(error.config)
+                } 
+
+                return Promise.reject(error)
+            }
+        )
+
+        setSetupDone(true)
+        return () => api.interceptors.response.eject(JWTUpdater)
+    }, [user])
+
+    return setupDone ? children : null;
 }
 
 export default api
