@@ -4,11 +4,18 @@ from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView as SimpleTokenObtainPairView,
+)
 
 import game.models
 import game.serializers
 import users.models
 import users.serializers
+
+
+class TokenObtainPairView(SimpleTokenObtainPairView):
+    serializer_class = users.serializers.TokenObtainPairSerializer
 
 
 class UserDataAPIView(APIView):
@@ -37,7 +44,7 @@ class UserInvitesAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        games = game.models.Game.objects.filter(users=request.user)
+        games = game.models.Game.objects.filter(users=request.user, status=2)
         shots = game.models.UserShots.objects.select_related("game").filter(
             user=request.user,
             game__in=games,
@@ -55,7 +62,7 @@ class UserGamesAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        games = game.models.Game.objects.filter(users=request.user)
+        games = game.models.Game.objects.filter(users=request.user, status=3)
         shots = game.models.UserShots.objects.select_related("game").filter(
             user=request.user,
             game__in=games,

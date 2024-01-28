@@ -1,9 +1,16 @@
 from django.db.models import Sum
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer as SimpleTokenObtainPairSerializer,
+)
 
 
 from game.models import Prize, UserShots
 from users import models
+
+
+class TokenObtainPairSerializer(SimpleTokenObtainPairSerializer):
+    default_error_messages = {"no_active_account": "Неверный логин или пароль"}
 
 
 class RegisterSerializer(serializers.ModelSerializer):

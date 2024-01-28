@@ -26,7 +26,6 @@ class GameAPIView(ModelViewSet):
     DELETE - delete game
     """
 
-    permission_classes = [IsAdminUser]
     serializer_class = game.serializers.GameSerializer
     queryset = game.models.Game.objects.all()
     lookup_field = "link"
@@ -73,9 +72,11 @@ class GameAPIView(ModelViewSet):
         )
         return Response(game_serializer.data, status=HTTPStatus.OK)
 
+    @decorators.permission_classes([IsAdminUser])
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
+    @decorators.permission_classes([IsAdminUser])
     def update(self, request, link):
         current_game = game.models.Game.objects.get(link=link)
         if current_game.status in (0, 1):
@@ -86,6 +87,7 @@ class GameAPIView(ModelViewSet):
             status=HTTPStatus.METHOD_NOT_ALLOWED,
         )
 
+    @decorators.permission_classes([IsAdminUser])
     def destroy(self, request, link):
         current_game = game.models.Game.objects.get(link=link)
         if current_game.status in (0, 1):
@@ -118,9 +120,19 @@ class PrizeAPIView(ModelViewSet):
         prize.is_valid(raise_exception=True)
         prize.save()
 
-        data["prize"] = prize.instance.pk
-        data["cell"]["game"] = data["game"]
-        ship = game.serializers.ShipSerializer(data=data)
+        new_data = {
+            "text": data.get("text"),
+            "title": data.get("title"),
+            "activation_code": data.get("activation_code"),
+            "game": data.get("game"),
+            "prize": prize.instance.pk,
+            "cell": {
+                "game": data.get("game"),
+                "position": data.get("cell[position]"),
+            },
+        }
+
+        ship = game.serializers.ShipSerializer(data=new_data)
         ship.is_valid(raise_exception=True)
         ship.save()
 

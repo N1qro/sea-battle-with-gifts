@@ -162,13 +162,13 @@ class UserTests(APITestCase):
             "text": "text2",
             "game": self.game.link,
             "activation_code": "test code",
-            "cell": {"position": "A1"},
+            "cell[position]": "A1",
         }
 
         response = self.client.post(
             reverse("game:prize-list"),
             data,
-            format="json",
+            format="multipart",
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

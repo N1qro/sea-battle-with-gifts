@@ -9,7 +9,7 @@ app_name = "users"
 urlpatterns = [
     path(
         "auth/",
-        jwt_views.TokenObtainPairView.as_view(),
+        views.TokenObtainPairView.as_view(),
         name="token_obtain_pair",
     ),
     path(
