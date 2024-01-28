@@ -44,7 +44,7 @@ class UserInvitesAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        games = game.models.Game.objects.filter(users=request.user, status=2)
+        games = game.models.Game.objects.filter(users=request.user, status__in=(1, 2))
         shots = game.models.UserShots.objects.select_related("game").filter(
             user=request.user,
             game__in=games,
