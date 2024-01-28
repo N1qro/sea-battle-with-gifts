@@ -12,24 +12,7 @@ import users.models
 import users.serializers
 
 
-class GameNotStartedMixin:
-    def update(self, request, pk, game_link=None):
-        if game.models.Game.objects.get(link=game_link).status in (0, 1):
-            return self.update(request, pk)
-
-        return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)
-
-    def destroy(self, request, pk, game_link=None):
-        if game.models.Game.objects.get(link=game_link).status in (0, 1):
-            return self.destroy(request, pk)
-
-        return Response(status=HTTPStatus.METHOD_NOT_ALLOWED)
-
-
-class GameAPIView(
-    ModelViewSet,
-    GameNotStartedMixin,
-):
+class GameAPIView(ModelViewSet):
 
     """
     GET - all games
@@ -94,18 +77,27 @@ class GameAPIView(
         return super().create(request, *args, **kwargs)
 
     def update(self, request, link):
-        pk = game.models.Game.objects.get(link=link).pk
-        return super().update(request, pk, game_link=link)
+        current_game = game.models.Game.objects.get(link=link)
+        if current_game.status in (0, 1):
+            return super().update(request, current_game.pk)
+
+        return Response(
+            data={"details": "Вы не можете изменять уже начавшуюся игру"},
+            status=HTTPStatus.METHOD_NOT_ALLOWED,
+        )
 
     def destroy(self, request, link):
-        pk = game.models.Game.objects.get(link=link).pk
-        return super().destroy(request, pk, game_link=link)
+        current_game = game.models.Game.objects.get(link=link)
+        if current_game.status in (0, 1):
+            return super().destroy(request, current_game.pk)
+
+        return Response(
+            data={"details": "Вы не можете удалить уже начавшуюся игру"},
+            status=HTTPStatus.METHOD_NOT_ALLOWED,
+        )
 
 
-class PrizeAPIView(
-    ModelViewSet,
-    GameNotStartedMixin,
-):
+class PrizeAPIView(ModelViewSet):
 
     """Create prize"""
 
@@ -135,10 +127,24 @@ class PrizeAPIView(
         return Response(status=HTTPStatus.CREATED)
 
     def update(self, request, pk):
-        return super().update(request, pk, game_link=request.data["game"])
+        current_game = game.models.Game.objects.get(link=request.data["game"])
+        if current_game.status in (0, 1):
+            return super().update(request, pk)
+
+        return Response(
+            data={"details": "Вы не можете изменять уже начавшуюся игру"},
+            status=HTTPStatus.METHOD_NOT_ALLOWED,
+        )
 
     def destroy(self, request, pk):
-        return super().destroy(request, pk, game_link=request.data["game"])
+        current_game = game.models.Game.objects.get(link=request.data["game"])
+        if current_game.status in (0, 1):
+            return super().destroy(request, pk)
+
+        return Response(
+            data={"details": "Вы не можете удалить уже начавшуюся игру"},
+            status=HTTPStatus.METHOD_NOT_ALLOWED,
+        )
 
 
 class ShootAPIView(APIView):
@@ -150,7 +156,7 @@ class ShootAPIView(APIView):
         if request.user.is_superuser:
             return Response(
                 data={
-                    "detail": "Вы не можете стрелять,"
+                    "details": "Вы не можете стрелять, "
                     "так как являетесь администратором",
                 },
                 status=HTTPStatus.BAD_REQUEST,
@@ -207,10 +213,7 @@ class ShootAPIView(APIView):
         return Response(data=data, status=HTTPStatus.OK)
 
 
-class PlayersAPIView(
-    ModelViewSet,
-    GameNotStartedMixin,
-):
+class PlayersAPIView(ModelViewSet):
 
     """
     Add user - POST
@@ -233,7 +236,7 @@ class PlayersAPIView(
         if user.is_superuser:
             return Response(
                 data={
-                    "detail": "Вы не можете добавлять в игру администраторов",
+                    "details": "Вы не можете добавлять в игру администраторов",
                 },
                 status=HTTPStatus.BAD_REQUEST,
             )

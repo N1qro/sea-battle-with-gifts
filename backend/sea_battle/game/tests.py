@@ -80,6 +80,63 @@ class UserTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(game.models.Game.objects.count(), game_count + 1)
 
+    def test_update_game(self):
+        data = {
+            "title": "test",
+            "text": "text",
+            "size": 15,
+        }
+
+        response = self.client.put(
+            reverse("game:game-detail", kwargs={"link": self.game.link}),
+            data,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            game.models.Game.objects.get(link=self.game.link).size,
+            15,
+        )
+
+    def test_update_started_game(self):
+        self.game.status = 2
+        self.game.save()
+
+        data = {
+            "title": "test",
+            "text": "text",
+            "size": 15,
+        }
+
+        expected_data = {
+            "details": "Вы не можете изменять уже начавшуюся игру",
+        }
+
+        response = self.client.put(
+            reverse("game:game-detail", kwargs={"link": self.game.link}),
+            data,
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+        self.assertEqual(
+            game.models.Game.objects.get(link=self.game.link).size,
+            10,
+        )
+        self.assertEqual(json.loads(response.content), expected_data)
+
+    def test_delete_game(self):
+        game_count = game.models.Game.objects.count()
+
+        response = self.client.delete(
+            reverse("game:game-detail", kwargs={"link": self.game.link}),
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(game.models.Game.objects.count(), game_count - 1)
+
     def test_get_prize_api(self):
         data = {
             "id": 1,
@@ -117,6 +174,38 @@ class UserTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(game.models.Prize.objects.count(), prize_count + 1)
 
+    def test_update_prize(self):
+        data = {
+            "title": "update test",
+            "text": "text",
+            "game": self.game.link,
+            "activation_code": "test code",
+        }
+
+        response = self.client.put(
+            reverse("game:prize-detail", kwargs={"pk": self.prize.pk}),
+            data,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            game.models.Prize.objects.get(pk=self.prize.pk).title,
+            "update test",
+        )
+
+    def test_delete_prize(self):
+        prize_count = game.models.Prize.objects.count()
+
+        data = {"game": self.game.link}
+
+        response = self.client.delete(
+            reverse("game:prize-detail", kwargs={"pk": self.prize.pk}),
+            data,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(game.models.Prize.objects.count(), prize_count - 1)
+
     def test_make_shoot(self):
         self.user.is_superuser = False
         self.user.save()
@@ -131,6 +220,46 @@ class UserTests(APITestCase):
             "before_cell_status": 0,
             "count": 1,
             "after_cell_status": 1,
+        }
+
+        response = self.client.post(reverse("game:shoot"), data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content), expected_data)
+
+    def test_make_shoot_superuser(self):
+        data = {
+            "position": "A1",
+            "user": self.user.pk,
+            "game": self.game.link,
+        }
+
+        expected_data = {
+            "details": "Вы не можете стрелять, "
+            "так как являетесь администратором",
+        }
+
+        response = self.client.post(reverse("game:shoot"), data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(json.loads(response.content), expected_data)
+
+    def test_make_shoot_without_shots(self):
+        self.user.is_superuser = False
+        self.user.save()
+
+        self.user_shots.count = 0
+        self.user_shots.save()
+
+        data = {
+            "position": "A1",
+            "user": self.user.pk,
+            "game": self.game.link,
+        }
+
+        expected_data = {
+            "before_cell_status": 0,
+            "count": 0,
+            "after_cell_status": 0,
+            "error": "Нет выстрелов",
         }
 
         response = self.client.post(reverse("game:shoot"), data)
@@ -155,4 +284,20 @@ class UserTests(APITestCase):
         self.assertEqual(
             game.models.UserShots.objects.get(user=test_user).count,
             5,
+        )
+
+    def test_delete_player(self):
+        player_count = self.game.users.count()
+
+        data = {"game": self.game.link}
+
+        response = self.client.delete(
+            reverse("game:players-detail", kwargs={"pk": self.user.pk}),
+            data,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            game.models.Game.objects.get(pk=self.game.pk).users.count(),
+            player_count - 1,
         )
