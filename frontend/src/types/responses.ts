@@ -30,6 +30,7 @@ export interface GameData {
     size: number,
     text: string,
     link: string,
+    count?: number,
     cells?: CellObject[]
     players?: PlayerObject[]
 }

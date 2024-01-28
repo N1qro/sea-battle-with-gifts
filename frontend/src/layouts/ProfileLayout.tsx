@@ -6,6 +6,7 @@ import UserAvatar from "../assets/img/Avatar.png"
 import Button from "../components/Button"
 import useAuth from "../hooks/useAuth"
 import { useEffect, useState } from "react"
+import get_stats from "../api/userstats"
 
 
 interface UserData {
@@ -21,12 +22,11 @@ function ProfileLayout() {
     const [ data, setData ] = useState()
 
     useEffect(() => {
-        setData({
-            "username": "Vladdick",
-            "email": "example@mail.ru",
-            "shot_count": 5,
-            "prizes_awarded": 1,
-        })
+        (async () => {
+            const data = await get_stats()
+            console.log(data)
+            setData(data.content)
+        })()
     }, [])
 
     if (!user || !data) {
@@ -43,9 +43,8 @@ function ProfileLayout() {
                     <SubText>UID: {user.id}</SubText>
                 </CredentialContainer>
                 <div>
-                    <NavText>Сделано выстрелов: {data.shot_count}</NavText>
-                    <NavText>Получено призов: {data.prizes_awarded}</NavText>
-                    <NavText>Шанс попадания: ?%</NavText>
+                    <NavText>Выстрелов в наличии: {data.count}</NavText>
+                    <NavText>Получено призов: {data.prize_count}</NavText>
                 </div>
                 <nav>
                     <NavLink end to="">Список призов</NavLink>

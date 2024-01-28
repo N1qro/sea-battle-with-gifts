@@ -35,6 +35,8 @@ function Game() {
         fetchGameData(params.hash!, setGameData)
     }, [])
 
+    console.log(gameData)
+
     useEffect(() => {
         if (!!gameData) {
             const cell = gameData.cells?.filter(val => val.position === currentCell)[0]
@@ -106,7 +108,7 @@ function Game() {
             <NavContainer as="div">
                 <FlexRow>
                     <img src={target}/>
-                    <p>НЕТУ ИСТОЧНИКА</p>
+                    <p>Оставшиеся выстрелы: {gameData.count}</p>
                 </FlexRow>
             </NavContainer>
             <Board
