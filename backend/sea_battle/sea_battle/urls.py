@@ -8,6 +8,7 @@ urlpatterns = [
     path("api/user/", include("users.urls")),
     path("api/game/", include("game.urls")),
     path("api-auth/", include("rest_framework.urls")),
+    path("ckeditor/", include("ckeditor_uploader.urls")),
 ]
 
 

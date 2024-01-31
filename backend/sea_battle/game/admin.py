@@ -21,4 +21,3 @@ class GameAdmin(admin.ModelAdmin):
 @admin.register(models.Prize)
 class PrizeAdmin(admin.ModelAdmin):
     list_filter = ("winner", "game")
-
