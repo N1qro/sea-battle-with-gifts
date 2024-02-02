@@ -1,5 +1,5 @@
 import StyledFooter from "../styles/Footer"
-import { Link } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 
 
 function Footer() {
@@ -8,7 +8,7 @@ function Footer() {
     return (
         <StyledFooter>
 			<p>ShootingSeas © {currentYear}. Все права защищены.</p>
-			<Link to="">Связаться с нами</Link>
+			<NavLink to="feedback">Связаться с нами</NavLink>
         </StyledFooter>
     )
 }

@@ -1,9 +1,12 @@
-import { Outlet, useLoaderData } from "react-router-dom"
-import { ProfileBackground } from "../styles/Profile"
+import { Outlet } from "react-router-dom"
+import { ProfileBackground, CredentialContainer } from "../styles/Profile"
 import { Header4, SubText, NavText } from "../styles/TextStyles"
 import { NavLink } from "react-router-dom"
 import UserAvatar from "../assets/img/Avatar.png"
 import Button from "../components/Button"
+import useAuth from "../hooks/useAuth"
+import { useEffect, useState } from "react"
+import get_stats from "../api/userstats"
 
 
 interface UserData {
@@ -14,42 +17,41 @@ interface UserData {
 } 
 
 
-export async function loader() {
-    return new Promise<UserData>((resolve) => {
-        setTimeout(() => {
-            resolve({
-                "username": "Vladdick",
-                "email": "example@mail.ru",
-                "shot_count": 5,
-                "prizes_awarded": 1,
-            })
-        }, 50) // аля задержка
-    })
-}
-
-
 function ProfileLayout() {
-    const data = useLoaderData() as UserData
+    const { user, logout } = useAuth()
+    const [ data, setData ] = useState()
+
+    useEffect(() => {
+        (async () => {
+            const data = await get_stats()
+            console.log(data)
+            setData(data.content)
+        })()
+    }, [])
+
+    if (!user || !data) {
+        return <p>Loading</p>
+    }
 
     return (
         <ProfileBackground>
             <div>
-                <div>
+                <CredentialContainer>
                     <img src={UserAvatar} alt="profile-picture" />
-                    <Header4>{data.username}</Header4>
-                    <SubText>({data.email})</SubText>
-                </div>
+                    <Header4>{user.username}</Header4>
+                    <SubText>({user.email})</SubText>
+                    <SubText>UID: {user.id}</SubText>
+                </CredentialContainer>
                 <div>
-                    <NavText>Сделано выстрелов: {data.shot_count}</NavText>
-                    <NavText>Получено призов: {data.prizes_awarded}</NavText>
-                    <NavText>Шанс попадания: ?%</NavText>
+                    <NavText>Выстрелов в наличии: {data.count}</NavText>
+                    <NavText>Получено призов: {data.prize_count}</NavText>
                 </div>
                 <nav>
                     <NavLink end to="">Список призов</NavLink>
                     <NavLink to="invitations">Приглашения на игру</NavLink>
                     <NavLink to="history">История игр</NavLink>
                 </nav>
-                <Button $color="red">Выйти</Button>
+                <Button onClick={logout} $color="red">Выйти</Button>
             </div>
             <Outlet />
         </ProfileBackground>

@@ -1,9 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom"
+import useAuth from "../hooks/useAuth"
+
 
 function RequireAdmin() {
-    const isAdmin = true
+    const { user } = useAuth()
 
-    if (isAdmin) {
+    if (!!user && user.is_superuser) {
         return <Outlet />
     } 
 

@@ -1,7 +1,8 @@
 import styled from "styled-components";
-import { NavText, SubText } from "./TextStyles";
+import { Header4, Header5, NavText, RegularText, SubText } from "./TextStyles";
 import Button from "../components/Button";
 import StyledForm from "./StyledForm";
+import { FlexRow } from "./GlobalStyles";
 
 interface IndicatorProps {
     $color?: string;
@@ -28,6 +29,43 @@ export const ActiveGames = styled(FlexColumn)`
     border-radius: 20px 0px 0px 0px;
     background: rgb(var(--blue-color-2));
     grid-area: active;
+
+    ${Header5} {
+        height: 300px;
+        text-align: center;
+    }
+
+    p:last-child {
+        margin-top: auto;
+    }
+`
+
+export const GameContainer = styled.nav`
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-block: 1rem;
+    overflow-y: auto;
+    height: 300px;
+    max-height: 300px;
+`
+
+export const Game = styled.div<{$isActive: boolean}>`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 9px;
+
+    border-radius: 10px;
+    background: ${props => props.$isActive ? "gray" : "#5B85E9"};
+    box-shadow: 0px 1px 6.3px 0px rgba(0, 0, 0, 0.25);
+
+    ${FlexRow} {
+        gap: 1rem;
+        padding-right: 0.5rem;
+    }
 `
 
 export const BoardCreation = styled(FlexColumn)`
@@ -39,6 +77,10 @@ export const BoardCreation = styled(FlexColumn)`
         box-shadow: 0px 2px 10px 0 rgba(0, 0, 0, 0.25);
         background: inherit;
         border: inherit;
+    }
+
+    ${Button} {
+        text-align: center;
     }
 `
 
@@ -56,7 +98,7 @@ export const GameHistory = styled(FlexColumn)`
 export const GridContainer = styled.div`
     display: grid;
     gap: 1rem;
-    height: 70vh;
+    height: clamp(100px, 70vh, 100%);
     margin-block: auto;
     color: black;
 
