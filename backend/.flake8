@@ -9,6 +9,7 @@ exclude =
     .venv,
     */migrations/*,
 ignore = Q000
+extend-ignore = W503
 inline-quotes = double
 import-order-style = google
 application-import-order = stdlib,third-party,first-party,application

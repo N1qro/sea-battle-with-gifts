@@ -8,6 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 
 import game.models
 import game.serializers
+import game.utils
 import users.models
 import users.serializers
 
@@ -222,7 +223,6 @@ class ShootAPIView(APIView):
             user_shots.count -= 1
 
             ship = game.models.Ship.objects.get(cell=cell, game=current_game)
-
             ship.is_alive = False
             ship.save()
 
@@ -237,8 +237,11 @@ class ShootAPIView(APIView):
 
         if current_game.status == 1:
             current_game.status = 2
-            current_game.save()
 
+        if not game.utils.is_game_end(current_game=current_game):
+            current_game.status = 3
+
+        current_game.save()
         cell.save()
         user_shots.save()
 
