@@ -152,7 +152,7 @@ class PrizeAPIView(ModelViewSet):
                 "position": data.get("cell[position]"),
             },
         }
-
+        
         ship = game.serializers.ShipSerializer(data=new_data)
         ship.is_valid(raise_exception=True)
         ship.save()

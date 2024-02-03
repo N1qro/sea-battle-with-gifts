@@ -69,8 +69,7 @@ def update_link(sender, instance, **kwargs):
 class Cell(models.Model):
     position = models.CharField(
         verbose_name="позиция",
-        max_length=25,
-        unique=True,
+        max_length=25
     )
 
     status = models.IntegerField(
@@ -103,6 +102,8 @@ class Cell(models.Model):
     class Meta:
         verbose_name = "Клетка"
         verbose_name_plural = "Клетки"
+
+        unique_together = ["game", "position"]
 
     def __str__(self):
         return f"{self.game.title} - {self.position}"
