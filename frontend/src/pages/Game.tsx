@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import get_initial_data from "../api/gamedata"
 import Board from "../components/Board"
-import { Container, TitleBox, SidebarContainer, NavContainer } from "../styles/GamePage"
+import { Container, TitleBox, SidebarContainer, NavContainer, BoardContainer } from "../styles/GamePage"
 import target from "../assets/svg/target.svg"
 import { FlexRow } from "../styles/GlobalStyles"
 import { Header4, Header5, RegularText } from "../styles/TextStyles"
@@ -70,6 +70,10 @@ function Game() {
 
     if (!gameData) {
         return <p>Loading</p>
+    }
+
+    if (gameData.status === 3 && !prize) {
+        return <TitleBox>Игра завершена! Спасибо!</TitleBox>
     }
 
     const status = mapping[cellObject?.status || 0]
