@@ -35,7 +35,10 @@ function Game() {
         fetchGameData(params.hash!, setGameData)
     }, [])
 
-    console.log(gameData)
+    useEffect(() => {
+        const interval = setInterval(() => fetchGameData(params.hash!, setGameData), 1000)
+        return () => clearInterval(interval)
+    }, [])
 
     useEffect(() => {
         if (!!gameData) {
