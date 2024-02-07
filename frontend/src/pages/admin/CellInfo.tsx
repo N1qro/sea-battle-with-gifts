@@ -10,6 +10,7 @@ import { CellObject } from "../../types/responses"
 import delete_prize from "../../api/deleteprize"
 import create_prize from "../../api/createprize"
 import change_prize from "../../api/changeprize"
+import Editor, { ContentEditableEvent } from "react-simple-wysiwyg"
 
 
 function CellInfo() {
@@ -27,6 +28,10 @@ function CellInfo() {
         activation_code: "",
         image: null,
     })
+
+    function editorEdit(e: ContentEditableEvent) {
+        setFormData(prev => ({...prev, text: e.target.value}))
+    }
 
 	function handleTextInput(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setFormData(prev => ({...prev, [e.target.id]: e.target.value}))
@@ -108,12 +113,12 @@ function CellInfo() {
                     <div>
                         <label htmlFor="">Описание</label>
                         <br />
-                        <TextArea
-                            onChange={handleTextInput}
-                            value={formData.text}
+                        <Editor
                             disabled={gameData.status !== 0}
-                            name="description"
+                            value={formData.text}
+                            onChange={editorEdit}
                             id="text"
+                            name="text"
                         />
                         <FormError>{error.text}</FormError>
                     </div>

@@ -1,7 +1,7 @@
 import { NavText, RegularText, SubText } from "../styles/TextStyles"
 import { GiftContainer, UserGiftMain, UserGiftStripe, AbsoluteWindow, ActivationCodePopup } from "../styles/Profile"
 import { PrizeInfo } from "../pages/profile/Index"
-import { MouseEventHandler, useState } from "react"
+import { useState } from "react"
 import { Header4 } from "../styles/TextStyles"
 import Button from "./Button"
 import { PrependBackendURI } from "../utils"
@@ -22,7 +22,7 @@ function UserPrizeCard({ title, text, activation_code, image }: PrizeInfo) {
                 <AbsoluteWindow>
                     <ActivationCodePopup>
                         <Header4>{title}</Header4>
-                        <RegularText>{text}</RegularText>
+                        <RegularText dangerouslySetInnerHTML={{__html: text}} />
                         {image && <img src={PrependBackendURI(image)} alt="" />}
                         <RegularText>Код/ссылка активации:</RegularText>
                         <Input value={activation_code} />
@@ -33,7 +33,7 @@ function UserPrizeCard({ title, text, activation_code, image }: PrizeInfo) {
 
             <UserGiftMain $background={image && PrependBackendURI(image)}>
                 <NavText>{title}</NavText>
-                <SubText>{text}</SubText>
+                <SubText dangerouslySetInnerHTML={{__html: text}} />
             </UserGiftMain>
             <UserGiftStripe/>
         </GiftContainer>

@@ -108,6 +108,8 @@ export const ActivationCodePopup = styled.div`
     
     ${RegularText}:first-of-type {
         margin-bottom: 1rem;
+        max-height: 400px;
+        overflow-y: auto;
     } 
 
     ${Input} {
