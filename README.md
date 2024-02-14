@@ -13,6 +13,8 @@
 ##### Клонирование репозитория
 ```
 git clone https://github.com/N1qro/sea-battle-with-gifts.git
+
+cd sea-battle-with-gifts
 ```
 #### Создание виртуального окружения
 ##### Для Linux
@@ -23,7 +25,7 @@ source venv/bin/activate
 ##### Для Windows
 ```
 python -m venv venv
-venv\bin\activate
+venv\Scripts\activate
 ```
 
 #### Перейдите в директорию backend
@@ -34,12 +36,12 @@ cd backend
 #### Установка .env
 ##### Для Linux
 ```
-mv template.env .env
+mv .env.template .env
 ```
 И измените .env под себя
 ##### Для Windows
 ```
-ren template.env .env
+ren .env.template .env
 ```
 И измените .env под себя
 
